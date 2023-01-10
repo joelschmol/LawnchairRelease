@@ -1,7 +1,7 @@
 name: Publish release APK
 
 on:
-  push:
+  pull_request:
 
 jobs:
   build-release-apk:
