@@ -20,8 +20,11 @@ jobs:
           gradle-home-cache-cleanup: true
       - name: Build release APK
         run: ./gradlew assembleLawnWithQuickstepRelease
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
       - name: Publish artifact
         uses: ncipollo/release-action@v1
         with:
+          tag: $NOW
           artifacts: build/outputs/apk/lawnWithQuickstep/release/*.apk
           token: ${{ secrets.GITHUB_TOKEN }}
