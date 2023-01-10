@@ -28,4 +28,4 @@ jobs:
         with:
           tag: $NOW
           artifacts: build/outputs/apk/lawnWithQuickstep/release/*.apk
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
