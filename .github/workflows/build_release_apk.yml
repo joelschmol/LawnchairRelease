@@ -21,11 +21,8 @@ jobs:
           cache-read-only: false
       - name: Build release APK
         run: ./gradlew assembleLawnWithQuickstepRelease
-      - name: Set current date as env variable
-        run: echo "NOW=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-      - name: Publish artifact
-        uses: ncipollo/release-action@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          tag: $NOW
-          artifacts: build/outputs/apk/lawnWithQuickstep/release/*.apk
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release APK
+          path: build/outputs/apk/lawnWithQuickstep/release/*.apk
