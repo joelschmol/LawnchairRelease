@@ -180,6 +180,6 @@ class LawnchairAppSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm(c
     }
 
     companion object {
-        private const val maxResultsCount = 5
+        private const val maxResultsCount = 10
     }
 }
