@@ -112,15 +112,8 @@ final def buildCommit = providers.exec {
     commandLine('git', 'rev-parse', '--short=7', 'HEAD')
 }.standardOutput.asText.get().trim()
 
-final def ciBuild = System.getenv("CI") == "true"
-final def ciRef = System.getenv("GITHUB_REF") ?: ""
-final def ciRunNumber = System.getenv("GITHUB_RUN_NUMBER") ?: ""
-final def isReleaseBuild = ciBuild && ciRef.contains("alpha")
-final def devReleaseName = ciBuild ? "Dev (#${ciRunNumber})" : "Dev (${buildCommit})"
-
 final def version = "12.1.0"
-final def releaseName = "Alpha 4"
-final def versionDisplayName = "${version} ${isReleaseBuild ? releaseName : devReleaseName}"
+final def versionDisplayName = "${version} (${buildCommit})"
 final def majorVersion = versionDisplayName.split("\\.")[0]
 
 final def quickstepMinSdk = "32"
