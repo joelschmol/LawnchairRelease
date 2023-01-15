@@ -23,7 +23,6 @@ allprojects {
                 minSdk 26
                 targetSdk 32
                 vectorDrawables.useSupportLibrary = true
-                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
             }
             compileOptions {
                 sourceCompatibility JavaVersion.VERSION_1_8
