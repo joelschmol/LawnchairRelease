@@ -26,6 +26,7 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
@@ -94,7 +95,12 @@ public class WorkProfileManager implements PersonalWorkSlidingTabStrip.OnActiveP
                 if (Process.myUserHandle().equals(userProfile)) {
                     continue;
                 }
-                mUserManager.requestQuietModeEnabled(!enabled, userProfile);
+                // https://github.com/LawnchairLauncher/lawnchair/issues/3145
+                try {
+                    mUserManager.requestQuietModeEnabled(!enabled, userProfile);
+                } catch (RuntimeException e) {
+                    Toast.makeText(mAllApps.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
