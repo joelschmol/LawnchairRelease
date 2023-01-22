@@ -45,6 +45,12 @@ allprojects {
         notCompatibleWithConfigurationCache("https://github.com/RikkaApps/HiddenApiRefinePlugin/issues/9")
     }
 
+    tasks.matching {
+        it.name.contains("DependenciesReport")
+    }.configureEach {
+        notCompatibleWithConfigurationCache("https://docs.gradle.org/7.6/userguide/configuration_cache.html#config_cache:requirements:use_project_during_execution")
+    }
+
     ext.addFrameworkJar = { String name ->
         def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, name)
         if (!frameworkJar.exists()) {
