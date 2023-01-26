@@ -102,6 +102,9 @@ android {
         manifestPlaceholders.quickstepMaxSdk = quickstepMaxSdk
         buildConfigField "int", "QUICKSTEP_MIN_SDK", quickstepMinSdk
         buildConfigField "int", "QUICKSTEP_MAX_SDK", quickstepMaxSdk
+
+        //noinspection ChromeOsAbiSupport
+        ndk.abiFilters += "arm64-v8a"
     }
 
     applicationVariants.configureEach { variant ->
