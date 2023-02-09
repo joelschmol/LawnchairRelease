@@ -22,7 +22,6 @@ import android.os.Bundle
 import android.view.ViewTreeObserver
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.gestures.GestureController
@@ -63,16 +62,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class LawnchairLauncher : QuickstepLauncher() {
-
-    val gestureController by lazy { GestureController(this) }
     private val defaultOverlay by lazy { OverlayCallbackImpl(this) }
     private val prefs by lazy { PreferenceManager.getInstance(this) }
     private val preferenceManager2 by lazy { PreferenceManager2.getInstance(this) }
     private val insetsController by lazy { WindowInsetsControllerCompat(launcher.window, rootView) }
-
     private val themeProvider by lazy { ThemeProvider.INSTANCE.get(this) }
-    private lateinit var colorScheme: ColorScheme
-
     private val noStatusBarStateListener = object : StateManager.StateListener<LauncherState> {
         override fun onStateTransitionStart(toState: LauncherState) {
             if (toState is OverviewState) {
@@ -85,8 +79,10 @@ class LawnchairLauncher : QuickstepLauncher() {
             }
         }
     }
-
     private var hasBackGesture = false
+    private lateinit var colorScheme: ColorScheme
+
+    val gestureController by lazy { GestureController(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         layoutInflater.factory2 = LawnchairLayoutFactory(this)
@@ -151,16 +147,11 @@ class LawnchairLauncher : QuickstepLauncher() {
         out.add(SearchBarStateHandler(this))
     }
 
-    override fun getSupportedShortcuts(): Stream<SystemShortcut.Factory<*>> {
-        return Stream.concat(
-            super.getSupportedShortcuts(),
-            Stream.of(LawnchairShortcut.CUSTOMIZE)
-        )
-    }
+    override fun getSupportedShortcuts(): Stream<SystemShortcut.Factory<*>> =
+        Stream.concat(super.getSupportedShortcuts(), Stream.of(LawnchairShortcut.CUSTOMIZE))
 
-    override fun createSearchAdapterProvider(allapps: AllAppsContainerView): SearchAdapterProvider {
-        return LawnchairSearchAdapterProvider(this, allapps)
-    }
+    override fun createSearchAdapterProvider(allapps: AllAppsContainerView): SearchAdapterProvider =
+        LawnchairSearchAdapterProvider(this, allapps)
 
     override fun updateTheme() {
         if (themeProvider.colorScheme != colorScheme) {
@@ -207,16 +198,22 @@ class LawnchairLauncher : QuickstepLauncher() {
         })
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (activityResultRegistry.dispatchResult(requestCode, resultCode, data)) {
             mPendingActivityRequestCode = -1
         } else {
+            @Suppress("DEPRECATION")
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    override fun getDefaultOverlay(): LauncherOverlayManager {
-        return defaultOverlay
+    override fun getDefaultOverlay(): LauncherOverlayManager = defaultOverlay
+
+    fun recreateIfNotScheduled() {
+        if (sRestartFlags == 0) {
+            recreate()
+        }
     }
 
     private fun restartIfPending() {
@@ -226,27 +223,6 @@ class LawnchairLauncher : QuickstepLauncher() {
                 sRestartFlags = 0
                 recreate()
             }
-        }
-    }
-
-    private fun scheduleFlag(flag: Int) {
-        sRestartFlags = sRestartFlags or flag
-        if (lifecycle.currentState === Lifecycle.State.RESUMED) {
-            restartIfPending()
-        }
-    }
-
-    fun scheduleRecreate() {
-        scheduleFlag(FLAG_RECREATE)
-    }
-
-    fun scheduleRestart() {
-        scheduleFlag(FLAG_RESTART)
-    }
-
-    fun recreateIfNotScheduled() {
-        if (sRestartFlags == 0) {
-            recreate()
         }
     }
 
