@@ -187,6 +187,7 @@ public class OptionsPopupView extends ArrowPopup<Launcher>
         PreferenceManager2 preferenceManager2 = PreferenceManager2.getInstance(launcher);
         boolean lockHomeScreen = PreferenceExtensionsKt.firstBlocking(preferenceManager2.getLockHomeScreen());
         boolean showLockToggle = PreferenceExtensionsKt.firstBlocking(preferenceManager2.getLockHomeScreenButtonOnPopUp());
+        boolean showSystemSettings = PreferenceExtensionsKt.firstBlocking(preferenceManager2.getShowSystemSettingsEntryOnPopUp());
 
         ArrayList<OptionItem> options = new ArrayList<>();
         if (showLockToggle) {
@@ -195,6 +196,13 @@ public class OptionsPopupView extends ArrowPopup<Launcher>
                     lockHomeScreen ? R.drawable.ic_lock_open : R.drawable.ic_lock,
                     IGNORE,
                     OptionsPopupView::toggleHomeScreenLock));
+        }
+        if (showSystemSettings) {
+            options.add(new OptionItem(launcher,
+                R.string.system_settings,
+                R.drawable.ic_setting,
+                IGNORE,
+                OptionsPopupView::startSystemSettings));
         }
         options.add(new OptionItem(launcher,
             R.string.system_settings,
