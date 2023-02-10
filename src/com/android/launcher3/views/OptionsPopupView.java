@@ -205,11 +205,6 @@ public class OptionsPopupView extends ArrowPopup<Launcher>
                 OptionsPopupView::startSystemSettings));
         }
         options.add(new OptionItem(launcher,
-            R.string.system_settings,
-            R.drawable.ic_setting,
-            IGNORE,
-            OptionsPopupView::startSystemSettings));
-        options.add(new OptionItem(launcher,
                 R.string.settings_button_text,
                 R.drawable.ic_home_screen,
                 LAUNCHER_SETTINGS_BUTTON_TAP_OR_LONGPRESS,
