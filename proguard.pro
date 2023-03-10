@@ -51,6 +51,9 @@
   *;
 }
 
+# Don't touch the restrictionbypass code
+-keep class org.chickenhook.restrictionbypass.** { *; }
+
 # Silence warnings from Compose tooling
 -dontwarn sun.misc.Unsafe
 
