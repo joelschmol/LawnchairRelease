@@ -19,7 +19,6 @@
 package com.android.launcher3;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.graphics.BitmapCreationCheck;
@@ -33,8 +32,6 @@ import app.lawnchair.preferences.PreferenceManager;
  * Utility class to handle one time initializations of the main process
  */
 public class MainProcessInitializer implements ResourceBasedOverride {
-
-    private static final String TAG = "MainProcessInitializer";
 
     public static void initialize(Context context) {
         PreferenceManager.getInstance(context);
