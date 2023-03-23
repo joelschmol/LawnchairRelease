@@ -75,10 +75,10 @@ allprojects {
 // todo remove ext block after migrating to version catalog
 ext {
     FRAMEWORK_PREBUILTS_DIR = "$rootDir/prebuilts/libs"
-    accompanist_version = '0.28.0'
+    accompanist_version = '0.30.0'
     libsu_version = '5.0.4'
     protocVersion = '3.22.2'
-    room_version = '2.5.0'
+    room_version = '2.5.1'
     optoVersion = "1.0.18"
 }
 
@@ -126,7 +126,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.4.4"
     }
 
     final def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -331,10 +331,10 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended"
     implementation "androidx.compose.material:material"
     implementation "androidx.compose.runtime:runtime-livedata"
-    implementation 'androidx.compose.material3:material3:1.1.0-alpha08'
+    implementation 'androidx.compose.material3:material3:1.1.0-beta01'
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
-    implementation "androidx.activity:activity-compose:1.6.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0"
+    implementation "androidx.activity:activity-compose:1.7.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
     implementation "androidx.navigation:navigation-compose:2.5.3"
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation "androidx.slice:slice-core:1.1.0-alpha02"
