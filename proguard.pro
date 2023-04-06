@@ -1,6 +1,6 @@
--keep,allowshrinking,allowoptimization class com.android.launcher3.** {
-  *;
-}
+-keepattributes InnerClasses
+
+-keep,allowshrinking,allowoptimization class com.android.launcher3.** { *; }
 
 -keep class com.android.launcher3.graphics.ShadowDrawable {
   public <init>(...);
@@ -19,12 +19,8 @@
     public <init>(...);
 }
 
--keep interface com.android.launcher3.userevent.nano.LauncherLogProto.** {
-  *;
-}
--keep interface com.android.launcher3.model.nano.LauncherDumpProto.** {
-  *;
-}
+-keep interface com.android.launcher3.userevent.nano.LauncherLogProto.** { *; }
+-keep interface com.android.launcher3.model.nano.LauncherDumpProto.** { *; }
 
 # Discovery bounce animation
 -keep class com.android.launcher3.allapps.DiscoveryBounce$VerticalProgressWrapper {
@@ -43,13 +39,9 @@
 -dontwarn com.android.internal.util.**
 
 ################ Do not optimize recents lib #############
--keep class com.android.systemui.** {
-  *;
-}
+-keep class com.android.systemui.** { *; }
 
--keep class com.android.quickstep.** {
-  *;
-}
+-keep class com.android.quickstep.** { *; }
 
 # Don't touch the restrictionbypass code
 -keep class org.chickenhook.restrictionbypass.** { *; }
@@ -81,6 +73,7 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
 
+-keep class com.android.** { *; }
 # Preserve Protobuf generated code
 -keep class com.android.launcher3.tracing.nano.LauncherTraceFileProto$* { *; }
 -keep class com.android.launcher3.logger.nano.LauncherAtom$* { *; }
@@ -98,12 +91,5 @@
 -keep class com.android.launcher3.userevent.LauncherLogExtensions$* { *; }
 -keep class app.lawnchair.LawnchairProto$* { *; }
 -keep class com.google.protobuf.Timestamp { *; }
--keepattributes InnerClasses
 
--keep class app.lawnchair.compatlib.** {
-  *;
-}
-
--keep class com.android.** {
-  *;
-}
+-keep class app.lawnchair.compatlib.** { *; }
