@@ -1,14 +1,15 @@
 import com.android.build.gradle.BasePlugin
+import com.google.protobuf.gradle.GenerateProtoTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id 'com.android.application' version "7.4.2"
     id 'com.android.library' version "7.4.2" apply false
-    id 'org.jetbrains.kotlin.android' version "1.8.10"
-    id 'org.jetbrains.kotlin.plugin.parcelize' version "1.8.10"
-    id 'org.jetbrains.kotlin.plugin.serialization' version "1.8.10"
-    id "com.google.devtools.ksp" version "1.8.10-1.0.9"
+    id 'org.jetbrains.kotlin.android' version "1.8.20"
+    id 'org.jetbrains.kotlin.plugin.parcelize' version "1.8.20"
+    id 'org.jetbrains.kotlin.plugin.serialization' version "1.8.20"
+    id "com.google.devtools.ksp" version "1.8.20-1.0.10"
     id 'com.google.protobuf' version "0.9.1"
     id 'com.google.android.gms.oss-licenses-plugin' version "0.10.6"
     id 'dev.rikka.tools.refine' version "4.3.0"
@@ -50,10 +51,8 @@ allprojects {
         notCompatibleWithConfigurationCache("https://github.com/RikkaApps/HiddenApiRefinePlugin/issues/9")
     }
 
-    tasks.matching {
-        it.name.contains("DependenciesReport")
-    }.configureEach {
-        notCompatibleWithConfigurationCache("https://docs.gradle.org/7.6/userguide/configuration_cache.html#config_cache:requirements:use_project_during_execution")
+    tasks.withType(GenerateProtoTask).configureEach {
+        notCompatibleWithConfigurationCache("https://github.com/google/protobuf-gradle-plugin/issues/687")
     }
 
     ext.addFrameworkJar = { String name ->
@@ -77,7 +76,7 @@ ext {
     FRAMEWORK_PREBUILTS_DIR = "$rootDir/prebuilts/libs"
     accompanist_version = '0.30.1'
     libsu_version = '5.0.5'
-    protocVersion = '3.22.2'
+    protocVersion = '3.22.3'
     room_version = '2.5.1'
     optoVersion = "1.0.18"
 }
@@ -126,7 +125,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.4"
+        kotlinCompilerExtensionVersion = "1.4.5"
     }
 
     final def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -346,7 +345,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.android.material:material:1.8.0"
-    implementation "io.github.fornewid:material-motion-compose-core:0.11.1"
+    implementation "io.github.fornewid:material-motion-compose-core:0.11.2"
     implementation 'dev.kdrag0n:colorkt:1.0.5'
     implementation 'io.coil-kt:coil-compose:2.3.0'
     implementation 'me.xdrop:fuzzywuzzy:1.4.0'
