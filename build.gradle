@@ -10,7 +10,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.parcelize' version "1.8.20"
     id 'org.jetbrains.kotlin.plugin.serialization' version "1.8.20"
     id "com.google.devtools.ksp" version "1.8.20-1.0.11"
-    id 'com.google.protobuf' version "0.9.1"
+    id 'com.google.protobuf' version "0.9.3"
     id 'com.google.android.gms.oss-licenses-plugin' version "0.10.6"
     id 'dev.rikka.tools.refine' version "4.3.0"
 }
@@ -45,9 +45,6 @@ allprojects {
         compilerOptions.jvmTarget = JvmTarget.JVM_1_8
     }
 
-    tasks.withType(GenerateProtoTask).configureEach {
-        notCompatibleWithConfigurationCache("https://github.com/google/protobuf-gradle-plugin/issues/687")
-    }
 
     ext.addFrameworkJar = { String name ->
         def frameworkJar = new File(FRAMEWORK_PREBUILTS_DIR, name)
@@ -339,7 +336,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.android.material:material:1.8.0"
-    implementation "io.github.fornewid:material-motion-compose-core:0.11.2"
+    implementation "io.github.fornewid:material-motion-compose-core:0.12.1"
     implementation 'dev.kdrag0n:colorkt:1.0.5'
     implementation 'io.coil-kt:coil-compose:2.3.0'
     implementation 'me.xdrop:fuzzywuzzy:1.4.0'
