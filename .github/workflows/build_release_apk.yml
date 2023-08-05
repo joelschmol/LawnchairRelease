@@ -37,6 +37,7 @@ jobs:
           java-version: 17
       - uses: gradle/gradle-build-action@v2
         with:
+          dependency-graph: ${{ github.ref == 'refs/heads/release' && 'generate-and-submit' || 'disabled'}}
           gradle-home-cache-cleanup: true
       - run: ./gradlew assembleLawnWithQuickstepRelease
       - uses: actions/upload-artifact@v3
@@ -45,7 +46,3 @@ jobs:
           path: |
             build/outputs/apk/lawnWithQuickstep/release/*.apk
             build/outputs/mapping/lawnWithQuickstepRelease/mapping.txt
-      - uses: mikepenz/gradle-dependency-submission@v1
-        if: github.ref == 'refs/heads/release'
-        with:
-          gradle-build-configuration: 'lawnWithQuickstepReleaseRuntimeClasspath'
