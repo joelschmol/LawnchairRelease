@@ -1,3 +1,5 @@
+-keepattributes InnerClasses
+
 -keep,allowshrinking,allowoptimization class com.android.launcher3.** { *; }
 
 -keep class com.android.launcher3.graphics.ShadowDrawable {
