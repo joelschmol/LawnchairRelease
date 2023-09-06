@@ -12,7 +12,7 @@ plugins {
     id 'com.google.protobuf' version "0.9.4"
     id 'app.cash.licensee' version "1.7.0"
     id 'dev.rikka.tools.refine' version "4.3.0"
-    id 'org.gradle.android.cache-fix' version '2.7.3'
+    id 'org.gradle.android.cache-fix' version '2.7.4'
 }
 
 allprojects {
@@ -63,7 +63,7 @@ allprojects {
 ext {
     FRAMEWORK_PREBUILTS_DIR = "$rootDir/prebuilts/libs"
     accompanist_version = '0.32.0'
-    libsu_version = '5.2.0'
+    libsu_version = '5.2.1'
     protocVersion = '3.24.2'
     room_version = '2.5.2'
     optoVersion = "1.0.18"
