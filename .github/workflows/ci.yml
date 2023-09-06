@@ -1,4 +1,4 @@
-name: Publish release APK
+name: CI
 
 on:
   push:
@@ -23,7 +23,7 @@ on:
       - 'NOTICE'
 
 jobs:
-  build-release-apk:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -41,6 +41,7 @@ jobs:
           gradle-home-cache-cleanup: true
       - run: ./gradlew assembleLawnWithQuickstepRelease
       - uses: actions/upload-artifact@v3
+        if: github.ref == 'refs/heads/release' && github.event_name == 'push'
         with:
           name: Release APK
           path: |
