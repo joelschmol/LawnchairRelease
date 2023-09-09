@@ -1,5 +1,4 @@
 import com.android.build.gradle.api.AndroidBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -52,8 +51,8 @@ allprojects {
             tasks.withType(JavaCompile).configureEach {
                 classpath = files(frameworkJar, classpath)
             }
-            dependencies {
-                compileOnly files(frameworkJar)
+            tasks.withType(KotlinCompile).configureEach {
+                it.libraries.from(files(frameworkJar))
             }
         }
     }
