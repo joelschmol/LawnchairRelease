@@ -11,7 +11,7 @@ plugins {
     id 'com.google.protobuf' version "0.9.4"
     id 'app.cash.licensee' version "1.7.0"
     id 'dev.rikka.tools.refine' version "4.3.0"
-    id 'org.gradle.android.cache-fix' version '2.7.4'
+    id 'org.gradle.android.cache-fix' version '2.8.0'
 }
 
 allprojects {
@@ -52,7 +52,7 @@ allprojects {
                 classpath = files(frameworkJar, classpath)
             }
             tasks.withType(KotlinCompile).configureEach {
-                it.libraries.from(files(frameworkJar))
+                libraries.from(files(frameworkJar))
             }
         }
     }
