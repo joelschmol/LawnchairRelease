@@ -9,7 +9,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization' version "1.9.10"
     id "com.google.devtools.ksp" version "1.9.10-1.0.13"
     id 'com.google.protobuf' version "0.9.4"
-    id 'app.cash.licensee' version "1.7.0"
+    id 'app.cash.licensee' version "1.8.0"
     id 'dev.rikka.tools.refine' version "4.3.0"
     id 'org.gradle.android.cache-fix' version '2.8.0'
 }
@@ -100,7 +100,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         def copyArtifactList = tasks.register("copy${variant.name.capitalize()}ArtifactList", Copy) {
-            dependsOn tasks.named("licensee${variant.name.capitalize()}")
+            dependsOn tasks.named("licenseeAndroid${variant.name.capitalize()}")
             from reporting.file("licensee/${variant.name}/artifacts.json")
             into layout.buildDirectory.dir("generated/dependencyAssets/")
         }
@@ -319,7 +319,7 @@ dependencies {
     implementation 'com.github.ChickenHook:RestrictionBypass:2.2'
     implementation 'dev.rikka.tools.refine:runtime:4.3.0'
 
-    implementation platform("androidx.compose:compose-bom:2023.09.00")
+    implementation platform("androidx.compose:compose-bom:2023.09.02")
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.ui:ui-util"
     debugImplementation "androidx.compose.ui:ui-tooling"
@@ -332,7 +332,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.activity:activity-compose:1.7.2"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2"
-    implementation "androidx.navigation:navigation-compose:2.7.2"
+    implementation "androidx.navigation:navigation-compose:2.7.3"
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation "androidx.slice:slice-core:1.1.0-alpha02"
     implementation "com.google.accompanist:accompanist-drawablepainter:$accompanist_version"
@@ -393,9 +393,8 @@ protobuf {
 licensee {
     allow("Apache-2.0")
     allow("BSD-3-Clause")
-    allowUrl("https://api.github.com/licenses/apache-2.0")
-    allowUrl("https://api.github.com/licenses/bsd-3-clause")
+    allow("GPL-2.0-or-later")
     allowUrl("https://github.com/patrykmichalik/opto/blob/master/LICENSE")
     allowUrl("https://github.com/RikkaApps/HiddenApiRefinePlugin/blob/main/LICENSE")
-    allowUrl("https://www.gnu.org/licenses/old-licenses/gpl-2.0.html")
+    allowUrl("https://opensource.org/licenses/mit-license.php")
 }
