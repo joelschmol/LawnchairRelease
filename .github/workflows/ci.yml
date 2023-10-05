@@ -41,7 +41,7 @@ jobs:
           gradle-home-cache-cleanup: true
       - run: ./gradlew assembleLawnWithQuickstepRelease
       - uses: actions/upload-artifact@v3
-        if: github.ref == 'refs/heads/release' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/trunk' && github.event_name == 'push'
         with:
           name: Release APK
           path: |
