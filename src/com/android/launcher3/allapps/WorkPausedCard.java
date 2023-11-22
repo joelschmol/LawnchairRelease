@@ -27,9 +27,10 @@ import android.widget.TextView;
 
 import androidx.core.view.ViewCompat;
 
-import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+import com.android.launcher3.model.StringCache;
+import com.android.launcher3.views.ActivityContext;
 
 import app.lawnchair.font.FontManager;
 import app.lawnchair.theme.color.ColorTokens;
@@ -39,9 +40,7 @@ import app.lawnchair.theme.color.ColorTokens;
  */
 public class WorkPausedCard extends LinearLayout implements View.OnClickListener {
 
-    private final Launcher mLauncher;
-    private Button mBtn;
-
+    private final ActivityContext mActivityContext;
     public WorkPausedCard(Context context) {
         this(context, null, 0);
     }
@@ -52,25 +51,38 @@ public class WorkPausedCard extends LinearLayout implements View.OnClickListener
 
     public WorkPausedCard(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mLauncher = Launcher.getLauncher(getContext());
+        mActivityContext = ActivityContext.lookupContext(getContext());
     }
-
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mBtn = findViewById(R.id.enable_work_apps);
-        mBtn.setOnClickListener(this);
-        mBtn.setAllCaps(false);
-        FontManager.INSTANCE.get(getContext()).setCustomFont(mBtn, R.id.font_button);
+        setWorkProfilePausedResources();
+    }
+
+    private void setWorkProfilePausedResources() {
+        TextView title = findViewById(R.id.work_apps_paused_title);
+        title.setText(R.string.work_apps_paused_title);
+        title.setTextColor(ColorTokens.TextColorPrimary.resolveColor(getContext()));
+        FontManager.INSTANCE.get(getContext()).setCustomFont(title, R.id.font_heading);
+
+        TextView body = findViewById(R.id.work_apps_paused_content);
+        body.setText(R.string.work_apps_paused_body);
+        body.setTextColor(ColorTokens.TextColorPrimary.resolveColor(getContext()));
+        FontManager.INSTANCE.get(getContext()).setCustomFont(title, R.id.font_body_medium);
+
+        Button button = findViewById(R.id.enable_work_apps);
+        button.setText(R.string.work_apps_enable_btn_text);
+        FontManager.INSTANCE.get(getContext()).setCustomFont(title, R.id.font_button);
+        button.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         if (Utilities.ATLEAST_P) {
             setEnabled(false);
-            mLauncher.getAppsView().getWorkManager().setWorkProfileEnabled(true);
-            mLauncher.getStatsLogManager().logger().log(LAUNCHER_TURN_ON_WORK_APPS_TAP);
+            mActivityContext.getAppsView().getWorkManager().setWorkProfileEnabled(true);
+            mActivityContext.getStatsLogManager().logger().log(LAUNCHER_TURN_ON_WORK_APPS_TAP);
         }
     }
 

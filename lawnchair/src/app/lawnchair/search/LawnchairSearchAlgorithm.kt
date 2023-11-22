@@ -10,32 +10,42 @@ import com.android.app.search.LayoutType.EMPTY_DIVIDER
 import com.android.app.search.LayoutType.ICON_SINGLE_VERTICAL_TEXT
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.Utilities
-import com.android.launcher3.allapps.AllAppsGridAdapter
+import com.android.launcher3.allapps.BaseAllAppsAdapter
 import com.android.launcher3.search.SearchAlgorithm
 
 sealed class LawnchairSearchAlgorithm(
-    protected val context: Context
-) : SearchAlgorithm<AllAppsGridAdapter.AdapterItem> {
+    protected val context: Context,
+) : SearchAlgorithm<BaseAllAppsAdapter.AdapterItem> {
 
     private val iconBackground = SearchItemBackground(
-        context, showBackground = false,
-        roundTop = true, roundBottom = true
+        context,
+        showBackground = false,
+        roundTop = true,
+        roundBottom = true,
     )
     private val normalBackground = SearchItemBackground(
-        context, showBackground = true,
-        roundTop = true, roundBottom = true
+        context,
+        showBackground = true,
+        roundTop = true,
+        roundBottom = true,
     )
     private val topBackground = SearchItemBackground(
-        context, showBackground = true,
-        roundTop = true, roundBottom = false
+        context,
+        showBackground = true,
+        roundTop = true,
+        roundBottom = false,
     )
     private val centerBackground = SearchItemBackground(
-        context, showBackground = true,
-        roundTop = false, roundBottom = false
+        context,
+        showBackground = true,
+        roundTop = false,
+        roundBottom = false,
     )
     private val bottomBackground = SearchItemBackground(
-        context, showBackground = true,
-        roundTop = false, roundBottom = true
+        context,
+        showBackground = true,
+        roundTop = false,
+        roundBottom = true,
     )
 
     protected fun transformSearchResults(results: List<SearchTargetCompat>): List<SearchAdapterItem> {
@@ -57,7 +67,7 @@ sealed class LawnchairSearchAlgorithm(
                     isLast -> bottomBackground
                     else -> centerBackground
                 }
-                SearchAdapterItem.createAdapterItem(index, target, background)
+                SearchAdapterItem.createAdapterItem(target, background)
             }
     }
 

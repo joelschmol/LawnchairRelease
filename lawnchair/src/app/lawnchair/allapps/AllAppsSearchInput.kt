@@ -29,18 +29,25 @@ import com.android.launcher3.Insettable
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
-import com.android.launcher3.allapps.*
+import com.android.launcher3.allapps.ActivityAllAppsContainerView
+import com.android.launcher3.allapps.AllAppsStore
+import com.android.launcher3.allapps.AlphabeticalAppsList
+import com.android.launcher3.allapps.BaseAllAppsAdapter.AdapterItem
+import com.android.launcher3.allapps.SearchUiManager
 import com.android.launcher3.allapps.search.AllAppsSearchBarController
 import com.android.launcher3.search.SearchCallback
 import com.android.launcher3.util.Themes
 import com.patrykmichalik.opto.core.firstBlocking
-import java.util.*
+import java.util.Locale
 import kotlin.math.max
 
-class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs),
-    Insettable, SearchUiManager,
-    SearchCallback<AllAppsGridAdapter.AdapterItem>,
-    AllAppsStore.OnUpdateListener, ViewTreeObserver.OnGlobalLayoutListener {
+class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
+    FrameLayout(context, attrs),
+    Insettable,
+    SearchUiManager,
+    SearchCallback<AdapterItem>,
+    AllAppsStore.OnUpdateListener,
+    ViewTreeObserver.OnGlobalLayoutListener {
 
     private lateinit var hint: TextView
     private lateinit var input: FallbackSearchInputView
@@ -55,8 +62,8 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
         Selection.setSelection(this, 0)
     }
 
-    private lateinit var apps: AlphabeticalAppsList
-    private lateinit var appsView: AllAppsContainerView
+    private lateinit var apps: AlphabeticalAppsList<*>
+    private lateinit var appsView: ActivityAllAppsContainerView<*>
 
     private var focusedResultTitle = ""
     private var canShowHint = false
@@ -106,7 +113,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
                     enableDebugMenu.set(!enableDebugMenu.get())
                     launcher.stateManager.goToState(LauncherState.NORMAL)
                 }
-            }
+            },
         )
 
         val hide = PreferenceManager2.getInstance(context).hideAppDrawerSearchBar.firstBlocking()
@@ -116,7 +123,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
         }
     }
 
-    override fun setFocusedResultTitle(title: CharSequence?) {
+    override fun setFocusedResultTitle(title: CharSequence?, sub: CharSequence?) {
         focusedResultTitle = title?.toString().orEmpty()
         updateHint()
     }
@@ -125,10 +132,10 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
         val inputString = input.text.toString()
         val inputLowerCase = inputString.lowercase(Locale.getDefault())
         val focusedLowerCase = focusedResultTitle.lowercase(Locale.getDefault())
-        if (canShowHint
-            && inputLowerCase.isNotEmpty() && focusedLowerCase.isNotEmpty()
-            && focusedLowerCase.matches(Regex("^[\\x00-\\x7F]*$"))
-            && focusedLowerCase.startsWith(inputLowerCase)
+        if (canShowHint &&
+            inputLowerCase.isNotEmpty() && focusedLowerCase.isNotEmpty() &&
+            focusedLowerCase.matches(Regex("^[\\x00-\\x7F]*$")) &&
+            focusedLowerCase.startsWith(inputLowerCase)
         ) {
             val hintColor = Themes.getAttrColor(context, android.R.attr.textColorTertiary)
             val hintText = SpannableStringBuilder(inputString)
@@ -146,28 +153,30 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        appsView.appsStore.addUpdateListener(this)
+        appsView.appsStore?.addUpdateListener(this)
         input.viewTreeObserver.addOnGlobalLayoutListener(this)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        appsView.appsStore.removeUpdateListener(this)
+        appsView.appsStore?.removeUpdateListener(this)
         input.viewTreeObserver.removeOnGlobalLayoutListener(this)
-    }
-
-    override fun initializeSearch(appsView: AllAppsContainerView) {
-        apps = appsView.apps
-        this.appsView = appsView
-        searchBarController.initialize(
-            LawnchairSearchAlgorithm.create(context),
-            input, launcher, this
-        )
-        input.initialize(appsView)
     }
 
     override fun onAppsUpdated() {
         searchBarController.refreshSearchResult()
+    }
+
+    override fun initializeSearch(appsView: ActivityAllAppsContainerView<*>) {
+        apps = appsView.searchResultList
+        this.appsView = appsView
+        searchBarController.initialize(
+            LawnchairSearchAlgorithm.create(context),
+            input,
+            launcher,
+            this,
+        )
+        input.initialize(appsView)
     }
 
     override fun resetSearch() {
@@ -190,20 +199,20 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
         }
     }
 
-    override fun onSearchResult(query: String, items: ArrayList<AllAppsGridAdapter.AdapterItem>?) {
+    override fun onSearchResult(query: String, items: ArrayList<AdapterItem>?) {
         if (items != null) {
             apps.setSearchResults(items)
             notifyResultChanged()
-            appsView.setLastSearchQuery(query)
+            appsView.setSearchResults(items)
         }
     }
 
-    override fun onAppendSearchResult(
+    fun onAppendSearchResult(
         query: String,
-        items: ArrayList<AllAppsGridAdapter.AdapterItem>?
+        items: ArrayList<AdapterItem>?,
     ) {
         if (items != null) {
-            apps.appendSearchResults(items)
+            apps.setSearchResults(items)
             notifyResultChanged()
         }
     }
@@ -218,11 +227,11 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
         searchQueryBuilder.clearSpans()
         Selection.setSelection(searchQueryBuilder, 0)
         appsView.onClearSearchResult()
-        appsView.floatingHeaderView?.setCollapsed(false)
+        appsView.floatingHeaderView?.setFloatingRowsCollapsed(false)
     }
 
     private fun notifyResultChanged() {
-        appsView.onSearchResultsChanged()
+        appsView.mSearchRecyclerView.onSearchResultsChanged()
     }
 
     override fun setInsets(insets: Rect) {
@@ -234,7 +243,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) : FrameLayout(c
         lp.topMargin = max(-allAppsSearchVerticalOffset, insets.top - qsbMarginTopAdjusting)
 
         val dp = launcher.deviceProfile
-        val horizontalPadding = dp.desiredWorkspaceHorizontalMarginPx + dp.cellLayoutPaddingLeftRightPx
+        val horizontalPadding = dp.desiredWorkspaceHorizontalMarginPx + dp.desiredWorkspaceHorizontalMarginPx
         setPadding(horizontalPadding, paddingTop, horizontalPadding, paddingBottom)
         requestLayout()
     }

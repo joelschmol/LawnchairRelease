@@ -7,9 +7,9 @@ import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import app.lawnchair.search.SearchAdapterItem
 import com.android.launcher3.R
-import com.android.launcher3.allapps.AllAppsContainerView
+import com.android.launcher3.allapps.ActivityAllAppsContainerView
 
-class SearchItemDecorator(private val appsView: AllAppsContainerView) : RecyclerView.ItemDecoration() {
+class SearchItemDecorator(private val appsView: ActivityAllAppsContainerView<*>) : RecyclerView.ItemDecoration() {
     private val context = appsView.context
     private val resources = context.resources
 
@@ -19,14 +19,14 @@ class SearchItemDecorator(private val appsView: AllAppsContainerView) : Recycler
         outRect: Rect,
         view: View,
         parent: RecyclerView,
-        state: RecyclerView.State
+        state: RecyclerView.State,
     ) {
         outRect.inset(0, searchDecorationPadding)
     }
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        val adapterItems = appsView.apps.adapterItems
-        val searchAdapterProvider = appsView.searchAdapterProvider
+        val adapterItems = appsView.mSearchRecyclerView.mApps.adapterItems
+        val searchAdapterProvider = appsView.mainAdapterProvider
         parent.children.forEach { child ->
             val adapterPosition = parent.getChildAdapterPosition(child)
             if (adapterPosition >= 0 && adapterPosition < adapterItems.size) {

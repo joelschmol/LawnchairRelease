@@ -67,6 +67,54 @@
 -dontwarn com.google.protobuf.nano.**
 -dontwarn dagger.**
 -dontwarn javax.inject.**
+-dontwarn android.net.**
+-dontwarn android.os.**
+-dontwarn android.bluetooth.**
+-dontwarn android.appwidget.AppWidgetHost$AppWidgetHostListener
+-dontwarn android.compat.Compatibility
+-dontwarn android.compat.annotation.UnsupportedAppUsage
+-dontwarn com.android.i18n.phonenumbers.PhoneNumberMatch
+-dontwarn com.android.i18n.phonenumbers.PhoneNumberUtil$Leniency
+-dontwarn com.android.i18n.phonenumbers.PhoneNumberUtil
+-dontwarn com.android.wm.shell.animation.FloatProperties
+-dontwarn com.android.wm.shell.animation.PhysicsAnimator$FlingConfig
+-dontwarn com.android.wm.shell.animation.PhysicsAnimator$SpringConfig
+-dontwarn com.android.wm.shell.animation.PhysicsAnimator$UpdateListener
+-dontwarn com.android.wm.shell.animation.PhysicsAnimator
+-dontwarn com.android.wm.shell.bubbles.BubbleDataRepository
+-dontwarn com.android.wm.shell.bubbles.BubbleOverflow
+-dontwarn com.android.wm.shell.bubbles.DismissView
+-dontwarn com.android.wm.shell.bubbles.ManageEducationView
+-dontwarn com.android.wm.shell.bubbles.RelativeTouchListener
+-dontwarn com.android.wm.shell.bubbles.StackEducationView
+-dontwarn com.android.wm.shell.common.FloatingContentCoordinator$FloatingContent
+-dontwarn com.android.wm.shell.common.FloatingContentCoordinator
+-dontwarn com.android.wm.shell.common.magnetictarget.MagnetizedObject$MagnetListener
+-dontwarn com.android.wm.shell.common.magnetictarget.MagnetizedObject$MagneticTarget
+-dontwarn com.android.wm.shell.common.magnetictarget.MagnetizedObject
+-dontwarn com.android.wm.shell.desktopmode.DesktopModeTaskRepository$ActiveTasksListener
+-dontwarn com.android.wm.shell.desktopmode.DesktopModeTaskRepository$VisibleTasksListener
+-dontwarn com.android.wm.shell.desktopmode.DesktopModeTaskRepository
+-dontwarn com.android.wm.shell.desktopmode.DesktopTasksController
+-dontwarn com.android.wm.shell.pip.tv.TvPipKeepClearAlgorithm$Placement
+-dontwarn com.android.wm.shell.pip.tv.TvPipKeepClearAlgorithm
+-dontwarn dalvik.system.BlockGuard$Policy
+-dontwarn dalvik.system.BlockGuard
+-dontwarn dalvik.system.CloseGuard
+-dontwarn dalvik.system.VMRuntime
+-dontwarn java.nio.NioUtils
+-dontwarn libcore.content.type.MimeMap$Builder
+-dontwarn libcore.content.type.MimeMap
+-dontwarn libcore.io.IoUtils
+-dontwarn libcore.net.NetworkSecurityPolicy
+-dontwarn libcore.util.EmptyArray
+-dontwarn libcore.util.HexEncoding
+-dontwarn libcore.util.NativeAllocationRegistry
+-dontwarn lineageos.providers.LineageSettings$System
+-dontwarn org.apache.harmony.dalvik.ddmc.ChunkHandler
+-dontwarn org.apache.harmony.dalvik.ddmc.DdmServer
+-dontwarn org.ccil.cowan.tagsoup.HTMLSchema
+-dontwarn org.ccil.cowan.tagsoup.Parser
 # We can remove these rules after updating to OkHttp 4.10.1
 # https://github.com/square/okhttp/blob/339732e3a1b78be5d792860109047f68a011b5eb/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro#L11-L14
 -dontwarn okhttp3.internal.platform.**
@@ -91,9 +139,19 @@
 -keep class com.android.launcher3.tracing.LauncherTraceProto$* { *; }
 -keep class com.android.launcher3.userevent.LauncherLogExtensions$* { *; }
 -keep class app.lawnchair.LawnchairProto$* { *; }
+-keep class app.lawnchair.LawnchairApp { *; }
+-keep class com.android.launcher3.Utilities { *; }
+-keep class app.lawnchair.LawnchairLauncher { *; }
 -keep class com.google.protobuf.Timestamp { *; }
+-keep class androidx.core.app.CoreComponentFactory { *; }
 
--keep class app.lawnchair.compatlib.** { *; }
+-keep class app.lawnchair.compatlib.** {
+  *;
+}
+
+-keep class com.android.** {
+  *;
+}
 
 # remove all logging from production apk
 -assumenosideeffects class android.util.Log {
@@ -126,3 +184,6 @@
     static void checkReturnedValueIsNotNull(java.lang.Object, java.lang.String, java.lang.String);
     static void throwUninitializedPropertyAccessException(java.lang.String);
 }
+
+# Keep Smartspacer's client SDK
+-keep class com.kieronquinn.app.smartspacer.sdk.**  { *; }

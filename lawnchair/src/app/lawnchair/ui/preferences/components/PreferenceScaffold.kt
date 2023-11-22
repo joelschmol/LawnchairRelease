@@ -17,13 +17,18 @@
 
 package app.lawnchair.ui.preferences.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import com.android.quickstep.SysUINavigationMode
 import com.google.accompanist.insets.ui.Scaffold
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +38,7 @@ fun PreferenceScaffold(
     label: String,
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: @Composable () -> Unit = { BottomSpacer() },
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
@@ -43,7 +48,7 @@ fun PreferenceScaffold(
                 backArrowVisible = backArrowVisible,
                 label = label,
                 actions = actions,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
         },
         bottomBar = bottomBar,
@@ -51,10 +56,4 @@ fun PreferenceScaffold(
     ) {
         content(it)
     }
-}
-
-@Composable
-fun navigationMode(): SysUINavigationMode.Mode {
-    val context = LocalContext.current
-    return SysUINavigationMode.getMode(context)
 }

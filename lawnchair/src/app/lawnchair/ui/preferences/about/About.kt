@@ -23,7 +23,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.LocalContentColor
@@ -102,6 +109,12 @@ private val product = listOf(
         socialUrl = "https://github.com/msfjarvis",
     ),
     TeamMember(
+        name = "John Andrew Camu",
+        role = Role.Development,
+        photoUrl = "https://avatars.githubusercontent.com/u/36076410",
+        socialUrl = "https://github.com/MrSluffy",
+    ),
+    TeamMember(
         name = "Kshitij Gupta",
         role = Role.Development,
         photoUrl = "https://avatars.githubusercontent.com/u/18647641",
@@ -132,10 +145,10 @@ private val product = listOf(
         socialUrl = "https://x.com/skittles9823",
     ),
     TeamMember(
-        name = "Yasan",
+        name = "Yasan Glass",
         role = Role.Development,
         photoUrl = "https://avatars.githubusercontent.com/u/41836211",
-        socialUrl = "https:/yasan.dev",
+        socialUrl = "https:/yasan.glass",
     ),
 )
 
@@ -185,7 +198,7 @@ private val links = listOf(
     Link(
         iconResId = R.drawable.ic_github,
         labelResId = R.string.github,
-        url = "https://github.com/LawnchairLauncher/Lawnchair",
+        url = "https://github.com/LawnchairLauncher/lawnchair",
     ),
     Link(
         iconResId = R.drawable.ic_discord,
@@ -215,7 +228,7 @@ fun About() {
     ) {
         Column(
             modifier = Modifier.padding(top = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_launcher_home_comp),
@@ -238,8 +251,8 @@ fun About() {
                     onLongClick = {
                         val commitUrl = "https://github.com/LawnchairLauncher/lawnchair/commit/${BuildConfig.COMMIT_HASH}"
                         context.startActivity(Intent(Intent.ACTION_VIEW, commitUrl.toUri()))
-                    }
-                )
+                    },
+                ),
             )
             Spacer(modifier = Modifier.requiredHeight(16.dp))
             Row(

@@ -12,7 +12,7 @@ import com.android.launcher3.R
 import com.android.launcher3.util.MainThreadInitializedObject
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class LawnchairBugReporter(private val context: Context) {
 
@@ -23,17 +23,17 @@ class LawnchairBugReporter(private val context: Context) {
     init {
         notificationManager.createNotificationChannel(
             NotificationChannel(
-                BugReportReceiver.notificationChannelId,
+                BugReportReceiver.NOTIFICATION_CHANNEL_ID,
                 context.getString(R.string.bugreport_channel_name),
-                NotificationManager.IMPORTANCE_HIGH
-            )
+                NotificationManager.IMPORTANCE_HIGH,
+            ),
         )
         notificationManager.createNotificationChannel(
             NotificationChannel(
-                BugReportReceiver.statusChannelId,
+                BugReportReceiver.STATUS_CHANNEL_ID,
                 context.getString(R.string.status_channel_name),
-                NotificationManager.IMPORTANCE_NONE
-            )
+                NotificationManager.IMPORTANCE_NONE,
+            ),
         )
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -104,6 +104,7 @@ class LawnchairBugReporter(private val context: Context) {
             .appendLine("build.id: ${Build.ID}")
             .appendLine("build.manufacturer: ${Build.MANUFACTURER}")
             .appendLine("build.model: ${Build.MODEL}")
+            .appendLine("build.security.level: ${Build.VERSION.SECURITY_PATCH}")
             .appendLine("build.product: ${Build.PRODUCT}")
             .appendLine("build.type: ${Build.TYPE}")
             .appendLine("version.codename: ${Build.VERSION.CODENAME}")

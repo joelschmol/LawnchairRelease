@@ -5,7 +5,7 @@ import android.os.Build
 import android.view.WindowInsetsAnimationControlListener
 import android.view.WindowInsetsAnimationController
 import androidx.annotation.RequiresApi
-import com.android.quickstep.AnimatedFloat
+import com.android.launcher3.anim.AnimatedFloat
 
 @RequiresApi(Build.VERSION_CODES.R)
 class SearchBarInsetsHandler(private val shiftRange: Float) : WindowInsetsAnimationControlListener {
@@ -34,7 +34,7 @@ class SearchBarInsetsHandler(private val shiftRange: Float) : WindowInsetsAnimat
         controller.setInsetsAndAlpha(
             Insets.of(0, 0, 0, bottomInset),
             1f,
-            progress.value
+            progress.value,
         )
     }
 

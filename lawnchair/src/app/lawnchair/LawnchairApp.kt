@@ -46,6 +46,7 @@ import com.android.launcher3.BuildConfig
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.Launcher
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.quickstep.RecentsActivity
 import com.android.systemui.shared.system.QuickStepContract
 import java.io.File
@@ -54,6 +55,7 @@ class LawnchairApp : Application() {
     private val compatible = Build.VERSION.SDK_INT in BuildConfig.QUICKSTEP_MIN_SDK..BuildConfig.QUICKSTEP_MAX_SDK
     private val isRecentsComponent: Boolean by lazy { checkRecentsComponent() }
     private val recentsEnabled: Boolean get() = compatible && isRecentsComponent
+    private val isAtleastT = Utilities.ATLEAST_T
     internal var accessibilityService: LawnchairAccessibilityService? = null
     val isVibrateOnIconAnimation: Boolean by lazy { getSystemUiBoolean("config_vibrateOnIconAnimation", false) }
 
@@ -117,6 +119,7 @@ class LawnchairApp : Application() {
     private fun getSystemUiBoolean(resName: String, fallback: Boolean): Boolean {
         val systemUiPackage = "com.android.systemui"
         val res = packageManager.getResourcesForApplication(systemUiPackage)
+
         @SuppressLint("DiscouragedApi")
         val resId = res.getIdentifier(resName, "bool", systemUiPackage)
         if (resId == 0) {
@@ -169,8 +172,8 @@ class LawnchairApp : Application() {
             return false
         }
 
-        val isRecentsComponent = recentsComponent.packageName == packageName
-                && recentsComponent.className == RecentsActivity::class.java.name
+        val isRecentsComponent = recentsComponent.packageName == packageName &&
+            recentsComponent.className == RecentsActivity::class.java.name
         if (!isRecentsComponent) {
             Log.d(TAG, "config_recentsComponentName ($recentsComponent) is not Lawnchair, disabling recents")
             return false
@@ -200,6 +203,9 @@ class LawnchairApp : Application() {
         @JvmStatic
         val isRecentsEnabled: Boolean get() = instance.recentsEnabled
 
+        @JvmStatic
+        val isAtleastT: Boolean get() = instance.isAtleastT
+
         fun Launcher.showQuickstepWarningIfNecessary() {
             val launcher = this
             if (!lawnchairApp.isRecentsComponent || isRecentsEnabled) return
@@ -210,7 +216,7 @@ class LawnchairApp : Application() {
                         val description = stringResource(
                             id = R.string.quickstep_incompatible_description,
                             stringResource(id = R.string.derived_app_name),
-                            Build.VERSION.RELEASE
+                            Build.VERSION.RELEASE,
                         )
                         Text(text = description)
                     },
@@ -219,17 +225,17 @@ class LawnchairApp : Application() {
                             onClick = {
                                 openAppInfo(launcher)
                                 close(true)
-                            }
+                            },
                         ) {
                             Text(text = stringResource(id = R.string.app_info_drop_target_label))
                         }
                         Spacer(modifier = Modifier.requiredWidth(8.dp))
                         Button(
-                            onClick = { close(true) }
+                            onClick = { close(true) },
                         ) {
                             Text(text = stringResource(id = android.R.string.ok))
                         }
-                    }
+                    },
                 )
             }
         }

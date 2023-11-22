@@ -11,9 +11,14 @@ import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
 import app.lawnchair.preferences2.preferenceManager2
-import app.lawnchair.ui.preferences.components.*
-import com.android.launcher3.settings.DeveloperOptionsFragment
+import app.lawnchair.ui.preferences.components.ClickablePreference
+import app.lawnchair.ui.preferences.components.FontPreference
+import app.lawnchair.ui.preferences.components.PreferenceGroup
+import app.lawnchair.ui.preferences.components.PreferenceLayout
+import app.lawnchair.ui.preferences.components.SwitchPreference
+import app.lawnchair.ui.preferences.components.TextPreference
 import com.android.launcher3.settings.SettingsActivity
+import com.android.launcher3.uioverrides.flags.DeveloperOptionsFragment
 import com.patrykmichalik.opto.domain.Preference
 
 fun NavGraphBuilder.debugMenuGraph(route: String) {
@@ -51,7 +56,7 @@ fun DebugMenuPreferences() {
             flags2.forEach {
                 SwitchPreference(
                     adapter = it.getAdapter(),
-                    label = it.key.name
+                    label = it.key.name,
                 )
             }
             flags.forEach {
@@ -63,7 +68,7 @@ fun DebugMenuPreferences() {
             textFlags.forEach {
                 TextPreference(
                     adapter = it.getAdapter(),
-                    label = it.key.name
+                    label = it.key.name,
                 )
             }
             fontFlags.forEach {

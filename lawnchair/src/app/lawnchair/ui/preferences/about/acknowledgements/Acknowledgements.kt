@@ -22,7 +22,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalUriHandler
@@ -38,7 +42,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import app.lawnchair.ui.preferences.LocalNavController
 import app.lawnchair.ui.preferences.LocalPreferenceInteractor
-import app.lawnchair.ui.preferences.components.*
+import app.lawnchair.ui.preferences.components.LoadingScreen
+import app.lawnchair.ui.preferences.components.PreferenceLayout
+import app.lawnchair.ui.preferences.components.PreferenceLayoutLazyColumn
+import app.lawnchair.ui.preferences.components.PreferenceTemplate
+import app.lawnchair.ui.preferences.components.preferenceGroupItems
 import app.lawnchair.ui.preferences.preferenceGraph
 import app.lawnchair.ui.preferences.subRoute
 import com.android.launcher3.R
@@ -47,7 +55,7 @@ fun NavGraphBuilder.licensesGraph(route: String) {
     preferenceGraph(route, { Acknowledgements() }) { subRoute ->
         composable(
             route = subRoute("{licenseIndex}"),
-            arguments = listOf(navArgument("licenseIndex") { type = NavType.IntType })
+            arguments = listOf(navArgument("licenseIndex") { type = NavType.IntType }),
         ) { backStackEntry ->
             NoticePage(index = backStackEntry.arguments!!.getInt("licenseIndex"))
         }
@@ -58,8 +66,11 @@ fun NavGraphBuilder.licensesGraph(route: String) {
 fun Acknowledgements() {
     val ossLibraries by LocalPreferenceInteractor.current.ossLibraries.collectAsState()
     LoadingScreen(ossLibraries) { libraries ->
+        val filteredLibraries = libraries.map {
+            it.copy(name = it.name ?: "Unknown")
+        }
         PreferenceLayoutLazyColumn(label = stringResource(id = R.string.acknowledgements)) {
-            preferenceGroupItems(libraries, isFirstChild = true) { index, library ->
+            preferenceGroupItems(filteredLibraries, isFirstChild = true) { index, library ->
                 OssLibraryItem(
                     ossLibrary = library,
                     index = index,
@@ -76,11 +87,13 @@ fun OssLibraryItem(ossLibrary: OssLibrary, index: Int) {
 
     PreferenceTemplate(
         title = {
-            Text(
-                text = ossLibrary.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            ossLibrary.name?.let {
+                Text(
+                    text = it,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         },
         modifier = Modifier
             .clickable { navController.navigate(route = destination) },
@@ -95,7 +108,7 @@ fun NoticePage(index: Int) {
     val data = dataState?.value
 
     PreferenceLayout(
-        label = ossLibrary?.name ?: stringResource(id = R.string.loading)
+        label = ossLibrary?.name ?: stringResource(id = R.string.loading),
     ) {
         Crossfade(targetState = data, label = "") { it ->
             it ?: return@Crossfade
@@ -124,7 +137,7 @@ fun NoticePage(index: Int) {
                 fontSize = 14.sp,
                 onTextLayout = {
                     layoutResult.value = it
-                }
+                },
             )
         }
     }

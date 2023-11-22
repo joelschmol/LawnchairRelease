@@ -1,6 +1,11 @@
 pluginManagement {
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex(".*google.*")
+                includeGroupByRegex(".*android.*")
+            }
+        }
         gradlePluginPortal()
     }
 }
@@ -21,7 +26,12 @@ gradleEnterprise {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex(".*google.*")
+                includeGroupByRegex(".*android.*")
+            }
+        }
         mavenCentral()
         maven { url 'https://jitpack.io' }
     }
@@ -37,6 +47,9 @@ include ':searchuilib'
 project(':searchuilib').projectDir = new File(rootDir, 'platform_frameworks_libs_systemui/searchuilib')
 
 include ':systemUIShared'
+include ':systemUIAnim'
+include ':systemUnFold'
+include ':systemUIViewCapture'
 include ':compatLib'
 include ':compatLibVR'
 include ':compatLibVS'

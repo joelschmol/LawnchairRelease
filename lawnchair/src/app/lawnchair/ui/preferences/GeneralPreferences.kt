@@ -83,7 +83,9 @@ fun GeneralPreferences() {
             currentIconPackName,
             stringResource(id = R.string.themed_icon_title),
         )
-    } else currentIconPackName
+    } else {
+        currentIconPackName
+    }
     val iconShapeSubtitle = iconShapeEntries(context)
         .firstOrNull { it.value == iconShapeAdapter.state.value }
         ?.label?.invoke()
@@ -91,11 +93,11 @@ fun GeneralPreferences() {
 
     PreferenceLayout(label = stringResource(id = R.string.general_label)) {
         PreferenceGroup {
-            SwitchPreference(
-                adapter = prefs.allowRotation.getAdapter(),
-                label = stringResource(id = R.string.home_screen_rotation_label),
-                description = stringResource(id = R.string.home_screen_rotaton_description),
-            )
+//            SwitchPreference(
+//                adapter = prefs.allowRotation.getAdapter(),
+//                label = stringResource(id = R.string.home_screen_rotation_label),
+//                description = stringResource(id = R.string.home_screen_rotaton_description),
+//            )
             val enableFontSelection = prefs2.enableFontSelection.asState().value
             if (enableFontSelection) {
                 FontPreference(
@@ -130,7 +132,7 @@ fun GeneralPreferences() {
                 subtitle = iconShapeSubtitle,
                 endWidget = {
                     IconShapePreview(iconShape = iconShapeAdapter.state.value)
-                }
+                },
             )
             SwitchPreference(
                 adapter = wrapAdaptiveIcons,
@@ -184,11 +186,11 @@ private fun NotificationDotColorContrastWarnings(
     dotColor: ColorOption,
     dotTextColor: ColorOption,
 ) {
-
     val dotColorIsDynamic = when (dotColor) {
         is ColorOption.SystemAccent,
         is ColorOption.WallpaperPrimary,
-        is ColorOption.Default -> true
+        is ColorOption.Default,
+        -> true
         else -> false
     }
 

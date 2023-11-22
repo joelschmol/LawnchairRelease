@@ -1,7 +1,11 @@
 package app.lawnchair.theme.drawable
 
 import android.content.res.ColorStateList
-import android.graphics.drawable.*
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RippleDrawable
+import android.graphics.drawable.StateListDrawable
 import androidx.appcompat.content.res.AppCompatResources
 import app.lawnchair.theme.color.ColorTokens
 import com.android.launcher3.R
@@ -16,7 +20,7 @@ object DrawableTokens {
     val BgOverviewClearAllButton = ResourceDrawableToken<RippleDrawable>(R.drawable.bg_overview_clear_all_button)
         .mutate { context, scheme, uiColorMode ->
             val background = getDrawable(0) as GradientDrawable
-            background.setColor(ColorTokens.Surface.resolveColor(context, scheme, uiColorMode))
+            background.setColor(ColorTokens.ColorBackground.resolveColor(context, scheme, uiColorMode))
         }
 
     @JvmField
@@ -72,7 +76,7 @@ object DrawableTokens {
         .setColor(ColorTokens.Surface)
 
     @JvmField
-    val WidgetsRecommendationBackground = ResourceDrawableToken<GradientDrawable>(R.drawable.widgets_recommendation_background)
+    val WidgetsRecommendationBackground = ResourceDrawableToken<GradientDrawable>(R.drawable.widgets_surface_background)
         .setColor(ColorTokens.Surface)
 
     @JvmField
@@ -84,18 +88,17 @@ object DrawableTokens {
         val list = StateListDrawable()
         list.setEnterFadeDuration(100)
 
-        val cornerRadius = context.resources
-            .getDimensionPixelSize(R.dimen.all_apps_header_pill_corner_radius).toFloat()
+        val unselected = AppCompatResources.getDrawable(
+            context,
+            R.drawable.all_apps_tabs_background,
+        )
+        unselected?.setTint(ColorTokens.Surface.resolveColor(context, scheme, uiColorMode))
 
-        val unselected = GradientDrawable()
-        unselected.shape = GradientDrawable.RECTANGLE
-        unselected.cornerRadius = cornerRadius
-        unselected.setColor(ColorTokens.Surface.resolveColor(context, scheme, uiColorMode))
-
-        val selected = GradientDrawable()
-        selected.shape = GradientDrawable.RECTANGLE
-        selected.cornerRadius = cornerRadius
-        selected.setColor(ColorTokens.AllAppsTabBackgroundSelected.resolveColor(context, scheme, uiColorMode))
+        val selected = AppCompatResources.getDrawable(
+            context,
+            R.drawable.all_apps_tabs_background,
+        )
+        selected?.setTint(ColorTokens.AllAppsTabBackgroundSelected.resolveColor(context, scheme, uiColorMode))
 
         list.addState(intArrayOf(-android.R.attr.state_selected), unselected)
         list.addState(intArrayOf(android.R.attr.state_selected), selected)
@@ -108,10 +111,14 @@ object DrawableTokens {
         val list = StateListDrawable()
 
         val disabled = AppCompatResources.getDrawable(
-            context, R.drawable.work_apps_toggle_background_shape)
+            context,
+            R.drawable.work_apps_toggle_background_shape,
+        )
 
         val enabled = AppCompatResources.getDrawable(
-            context, R.drawable.work_apps_toggle_background_shape) as GradientDrawable
+            context,
+            R.drawable.work_apps_toggle_background_shape,
+        ) as GradientDrawable
         enabled.setColor(ColorTokens.AllAppsTabBackgroundSelected.resolveColor(context, scheme, uiColorMode))
 
         list.addState(intArrayOf(-android.R.attr.state_enabled), disabled)
