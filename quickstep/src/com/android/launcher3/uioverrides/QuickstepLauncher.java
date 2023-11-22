@@ -34,7 +34,6 @@ import static com.android.launcher3.testing.TestProtocol.OVERVIEW_STATE_ORDINAL;
 import static com.android.launcher3.testing.TestProtocol.QUICK_SWITCH_STATE_ORDINAL;
 import static com.android.systemui.shared.system.ActivityManagerWrapper.CLOSE_SYSTEM_WINDOWS_REASON_HOME_KEY;
 
-import android.appwidget.AppWidgetHostHidden;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -91,7 +90,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import app.lawnchair.LawnchairApp;
-import dev.rikka.tools.refine.Refine;
 
 public class QuickstepLauncher extends BaseQuickstepLauncher {
 
@@ -346,8 +344,7 @@ public class QuickstepLauncher extends BaseQuickstepLauncher {
     protected LauncherAppWidgetHost createAppWidgetHost() {
         LauncherAppWidgetHost appWidgetHost = super.createAppWidgetHost();
         if (ENABLE_QUICKSTEP_WIDGET_APP_START.get() && LawnchairApp.isRecentsEnabled()) {
-            Refine.<AppWidgetHostHidden>unsafeCast(appWidgetHost)
-                .setInteractionHandler(new QuickstepInteractionHandler(this));
+            appWidgetHost.setInteractionHandler(new QuickstepInteractionHandler(this));
         }
         return appWidgetHost;
     }

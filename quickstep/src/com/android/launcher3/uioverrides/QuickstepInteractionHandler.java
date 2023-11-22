@@ -28,7 +28,6 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.RemoteViewsHidden;
 import android.window.SplashScreen;
 
 import com.android.launcher3.Utilities;
@@ -40,7 +39,7 @@ import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import dev.rikka.tools.refine.Refine;
 
 /** Provides a Quickstep specific animation when launching an activity from an app widget. */
-class QuickstepInteractionHandler implements RemoteViewsHidden.InteractionHandler {
+class QuickstepInteractionHandler implements RemoteViews.InteractionHandler {
 
     private static final String TAG = "QuickstepInteractionHandler";
 
@@ -69,7 +68,7 @@ class QuickstepInteractionHandler implements RemoteViewsHidden.InteractionHandle
             launchCookie = mLauncher.getLaunchCookie((ItemInfo) itemInfo);
             activityOptions.options.setLaunchCookie(launchCookie);
         }
-        if (Utilities.ATLEAST_T && !pendingIntent.isActivity()) {
+        if (Utilities.ATLEAST_S && !pendingIntent.isActivity()) {
             // In the event this pending intent eventually launches an activity, i.e. a trampoline,
             // use the Quickstep transition animation.
             try {
@@ -89,7 +88,7 @@ class QuickstepInteractionHandler implements RemoteViewsHidden.InteractionHandle
             }
         }
         activityOptions.options.setPendingIntentLaunchFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activityOptions.options.setSplashScreenStyle(SplashScreen.SPLASH_SCREEN_STYLE_SOLID_COLOR);
+        activityOptions.options.setSplashscreenStyle(SplashScreen.SPLASH_SCREEN_STYLE_EMPTY);
         options = Pair.create(options.first, activityOptions.options);
         if (pendingIntent.isActivity()) {
             logAppLaunch(itemInfo);

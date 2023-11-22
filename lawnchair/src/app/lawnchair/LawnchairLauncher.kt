@@ -16,13 +16,9 @@
 
 package app.lawnchair
 
-import android.Manifest
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
@@ -58,12 +54,11 @@ import com.android.systemui.shared.system.QuickStepContract
 import com.patrykmichalik.opto.core.firstBlocking
 import com.patrykmichalik.opto.core.onEach
 import dev.kdrag0n.monet.theme.ColorScheme
+import java.util.stream.Stream
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.stream.Stream
-
 
 class LawnchairLauncher : QuickstepLauncher() {
     private val defaultOverlay by lazy { OverlayCallbackImpl(this) }
@@ -144,8 +139,6 @@ class LawnchairLauncher : QuickstepLauncher() {
         showQuickstepWarningIfNecessary()
 
         reloadIconsIfNeeded()
-
-        requestNotificationPermission()
     }
 
     override fun collectStateHandlers(out: MutableList<StateManager.StateHandler<*>>) {
@@ -234,20 +227,9 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
     }
 
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return;
-        if (NotificationManagerCompat.from(this).areNotificationsEnabled()) return;
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-            REQUEST_CODE_NOTIFICATION_PERMISSION
-        )
-    }
-
     companion object {
         private const val FLAG_RECREATE = 1 shl 0
         private const val FLAG_RESTART = 1 shl 1
-        private const val REQUEST_CODE_NOTIFICATION_PERMISSION = 100
 
         var sRestartFlags = 0
 

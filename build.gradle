@@ -22,7 +22,7 @@ allprojects {
             compileSdk 34
             defaultConfig {
                 minSdk 26
-                targetSdk 33
+                targetSdk 32
                 vectorDrawables.useSupportLibrary = true
             }
             lint {
@@ -296,7 +296,7 @@ android {
         }
     }
 
-    addFrameworkJar('framework-13.jar')
+    addFrameworkJar('framework-12l.jar')
 }
 
 dependencies {
