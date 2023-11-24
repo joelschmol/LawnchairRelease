@@ -13,6 +13,8 @@ on:
       - 'LICENSE'
       - 'NOTICE'
   pull_request:
+    branches:
+      - trunk
     paths-ignore:
       - '.idea/**'
       - '.gitattributes'
