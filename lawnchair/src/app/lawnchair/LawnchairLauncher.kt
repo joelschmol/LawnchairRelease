@@ -217,6 +217,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         SmartspacerClient.close()
     }
 
