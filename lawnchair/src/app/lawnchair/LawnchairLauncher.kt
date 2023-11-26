@@ -36,6 +36,7 @@ import app.lawnchair.search.LawnchairSearchAdapterProvider
 import app.lawnchair.theme.ThemeProvider
 import app.lawnchair.ui.popup.LawnchairShortcut
 import app.lawnchair.util.getThemedIconPacksInstalled
+import app.lawnchair.util.unsafeLazy
 import com.android.launcher3.BaseActivity
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherState
@@ -64,11 +65,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class LawnchairLauncher : QuickstepLauncher() {
-    private val defaultOverlay by lazy { OverlayCallbackImpl(this) }
-    private val prefs by lazy { PreferenceManager.getInstance(this) }
-    private val preferenceManager2 by lazy { PreferenceManager2.getInstance(this) }
-    private val insetsController by lazy { WindowInsetsControllerCompat(launcher.window, rootView) }
-    private val themeProvider by lazy { ThemeProvider.INSTANCE.get(this) }
+    private val defaultOverlay by unsafeLazy { OverlayCallbackImpl(this) }
+    private val prefs by unsafeLazy { PreferenceManager.getInstance(this) }
+    private val preferenceManager2 by unsafeLazy { PreferenceManager2.getInstance(this) }
+    private val insetsController by unsafeLazy { WindowInsetsControllerCompat(launcher.window, rootView) }
+    private val themeProvider by unsafeLazy { ThemeProvider.INSTANCE.get(this) }
     private val noStatusBarStateListener = object : StateManager.StateListener<LauncherState> {
         override fun onStateTransitionStart(toState: LauncherState) {
             if (toState is OverviewState) {
@@ -84,7 +85,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     private var hasBackGesture = false
     private lateinit var colorScheme: ColorScheme
 
-    val gestureController by lazy { GestureController(this) }
+    val gestureController by unsafeLazy { GestureController(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         layoutInflater.factory2 = LawnchairLayoutFactory(this)
