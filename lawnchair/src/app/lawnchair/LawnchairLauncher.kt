@@ -22,6 +22,8 @@ import android.view.ViewTreeObserver
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.factory.LawnchairWidgetHolder
 import app.lawnchair.gestures.GestureController
@@ -39,6 +41,7 @@ import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.unsafeLazy
 import com.android.launcher3.BaseActivity
 import com.android.launcher3.LauncherAppState
+import com.android.launcher3.LauncherRootView
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.allapps.ActivityAllAppsContainerView
@@ -151,6 +154,14 @@ class LawnchairLauncher : QuickstepLauncher() {
         reloadIconsIfNeeded()
     }
 
+    override fun setupViews() {
+        super.setupViews()
+        findViewById<LauncherRootView>(R.id.launcher).also {
+            it.setViewTreeLifecycleOwner(this)
+            it.setViewTreeSavedStateRegistryOwner(this)
+        }
+    }
+
     override fun collectStateHandlers(out: MutableList<StateManager.StateHandler<*>>) {
         super.collectStateHandlers(out)
         out.add(SearchBarStateHandler(this))
@@ -201,7 +212,7 @@ class LawnchairLauncher : QuickstepLauncher() {
         restartIfPending()
 
         dragLayer.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
-            var handled = false
+            private var handled = false
 
             override fun onDraw() {
                 if (handled) {

@@ -59,12 +59,10 @@
 
         <activity
             android:name="app.lawnchair.BlankActivity"
-            android:exported="false"
             android:theme="@style/Theme.Transparent" />
 
         <activity
             android:name="app.lawnchair.smartspace.SmartspacePreferencesShortcut"
-            android:exported="false"
             android:theme="@style/Theme.Transparent" />
 
         <activity android:name="androidx.slice.compat.SlicePermissionActivity"
