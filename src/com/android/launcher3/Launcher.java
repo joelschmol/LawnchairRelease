@@ -1035,6 +1035,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     @Override
     public void onActivityResult(
             final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         mPendingActivityRequestCode = -1;
         handleActivityResult(requestCode, resultCode, data);
     }
@@ -1605,13 +1606,6 @@ public class Launcher extends StatefulActivity<LauncherState>
         super.onDetachedFromWindow();
         mOverlayManager.onDetachedFromWindow();
         closeContextMenu();
-    }
-
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        NonConfigInstance instance = new NonConfigInstance();
-        instance.config = new Configuration(mOldConfig);
-        return instance;
     }
 
     public AllAppsTransitionController getAllAppsController() {
@@ -2308,7 +2302,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     /**
      * Sets the next pages to bind synchronously on next bind.
-     * 
+     *
      * @param pages should not be null.
      */
     public void setPagesToBindSynchronously(@NonNull IntSet pages) {
@@ -3013,7 +3007,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     /**
      * Finds the first view matching the ordered operators across the given
      * viewgroups in order.
-     * 
+     *
      * @param containers List of ViewGroups to scan, in order of preference.
      * @param operators  List of operators, in order starting from best matching
      *                   operator.

@@ -19,18 +19,12 @@ package app.lawnchair
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.graphics.Color
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.setViewTreeLifecycleOwner
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import androidx.savedstate.SavedStateRegistry
-import androidx.savedstate.SavedStateRegistryController
-import androidx.savedstate.SavedStateRegistryOwner
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.factory.LawnchairWidgetHolder
 import app.lawnchair.gestures.GestureController
@@ -258,11 +252,6 @@ class LawnchairLauncher : QuickstepLauncher() {
 
         Utilities.allowBGLaunch(options)
         return ActivityOptionsWrapper(options, callbacks)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
     }
 
     override fun onResume() {
