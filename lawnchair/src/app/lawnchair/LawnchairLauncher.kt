@@ -59,7 +59,6 @@ import com.android.launcher3.util.RunnableList
 import com.android.launcher3.util.SystemUiController.UI_STATE_BASE_WINDOW
 import com.android.launcher3.util.Themes
 import com.android.launcher3.util.TouchController
-import com.android.launcher3.views.ComposeInitializer
 import com.android.launcher3.views.FloatingSurfaceView
 import com.android.launcher3.widget.LauncherWidgetHolder
 import com.android.launcher3.widget.RoundedCornerEnforcement
@@ -160,11 +159,6 @@ class LawnchairLauncher : QuickstepLauncher() {
         showQuickstepWarningIfNecessary()
 
         reloadIconsIfNeeded()
-    }
-
-    override fun setupViews() {
-        super.setupViews()
-        ComposeInitializer.initCompose(this)
     }
 
     override fun collectStateHandlers(out: MutableList<StateManager.StateHandler<*>>) {
