@@ -109,9 +109,11 @@ final def buildCommit = providers.exec {
     commandLine('git', 'rev-parse', '--short=7', 'HEAD')
 }.standardOutput.asText.get().trim()
 
-final def version = "13.0.0"
-final def versionDisplayName = "${version} (${buildCommit})"
-final def majorVersion = versionDisplayName.split("\\.")[0]
+final def versionString = "14.0.0"
+final def versionDisplayName = "${versionString} (${buildCommit})"
+final def parts = versionString.split("\\.")
+final def majorVersion = parts[0]
+final def versionInt = parts[0].toInteger() * 1000000 + parts[1].toInteger() * 10000 + parts[2].toInteger() * 100
 
 final def quickstepMinSdk = "34"
 final def quickstepMaxSdk = "34"
@@ -119,7 +121,7 @@ final def quickstepMaxSdk = "34"
 android {
     namespace "com.android.launcher3"
     defaultConfig {
-        versionCode 13_00_00_00
+        versionCode versionInt
         versionName "${versionDisplayName}"
         buildConfigField "String", "VERSION_DISPLAY_NAME", "\"${versionDisplayName}\""
         buildConfigField "String", "MAJOR_VERSION", "\"${majorVersion}\""
