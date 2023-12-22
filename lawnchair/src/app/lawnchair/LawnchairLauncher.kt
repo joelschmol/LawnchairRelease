@@ -35,7 +35,6 @@ import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
 import app.lawnchair.root.RootHelperManager
 import app.lawnchair.root.RootNotAvailableException
-import app.lawnchair.search.LawnchairSearchAdapterProvider
 import app.lawnchair.theme.ThemeProvider
 import app.lawnchair.ui.popup.LawnchairShortcut
 import app.lawnchair.util.getThemedIconPacksInstalled
@@ -47,8 +46,6 @@ import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
-import com.android.launcher3.allapps.ActivityAllAppsContainerView
-import com.android.launcher3.allapps.search.SearchAdapterProvider
 import com.android.launcher3.popup.SystemShortcut
 import com.android.launcher3.statemanager.StateManager
 import com.android.launcher3.uioverrides.QuickstepLauncher
@@ -102,6 +99,10 @@ class LawnchairLauncher : QuickstepLauncher() {
         super.onCreate(savedInstanceState)
 
         prefs.launcherTheme.subscribeChanges(this, ::updateTheme)
+        prefs.feedProvider.subscribeChanges(this, defaultOverlay::reconnect)
+        preferenceManager2.enableFeed.get().distinctUntilChanged().onEach { enable ->
+            defaultOverlay.setEnableFeed(enable)
+        }.launchIn(scope = lifecycleScope)
 
         if (prefs.autoLaunchRoot.get()) {
             lifecycleScope.launch {
@@ -168,9 +169,6 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun getSupportedShortcuts(): Stream<SystemShortcut.Factory<*>> =
         Stream.concat(super.getSupportedShortcuts(), Stream.of(LawnchairShortcut.CUSTOMIZE))
-
-    override fun createMainAdapterProvider(allapps: ActivityAllAppsContainerView<*>): SearchAdapterProvider<*> =
-        LawnchairSearchAdapterProvider(this, allapps)
 
     override fun updateTheme() {
         if (themeProvider.colorScheme != colorScheme) {
