@@ -41,6 +41,7 @@ jobs:
         with:
           dependency-graph: ${{ github.ref == 'refs/heads/release' && 'generate-and-submit' || 'disabled'}}
           gradle-home-cache-cleanup: true
+          cache-encryption-key: Da25KUVSE5jbGds2zXmfXw==
       - run: ./gradlew assembleLawnWithQuickstepRelease
       - uses: actions/upload-artifact@v3
         if: github.ref == 'refs/heads/trunk' && github.event_name == 'push'
