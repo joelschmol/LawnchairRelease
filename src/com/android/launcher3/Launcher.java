@@ -991,7 +991,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                             presenterPos.cellX, presenterPos.cellY, newScreenId, CONTAINER_DESKTOP).screenId;
                 }
                 final CellLayout dropLayout = mWorkspace.getScreenWithId(presenterPos.screenId);
-
+                if (dropLayout == null) return;
                 dropLayout.setDropPending(true);
                 final Runnable onComplete = new Runnable() {
                     @Override
@@ -1538,6 +1538,9 @@ public class Launcher extends StatefulActivity<LauncherState>
             hostView = mAppWidgetHolder.createView(this, appWidgetId, appWidgetInfo);
         }
 
+        if (appWidgetInfo.provider == null) {
+            appWidgetInfo.provider = itemInfo.getTargetComponent();
+        }
         LauncherAppWidgetInfo launcherInfo;
         launcherInfo = new LauncherAppWidgetInfo(
                 appWidgetId, appWidgetInfo.provider, appWidgetInfo, hostView);
