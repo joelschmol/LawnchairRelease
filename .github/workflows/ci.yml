@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: 21
       - uses: gradle/gradle-build-action@v3-prerelease
         with:
           dependency-graph: ${{ github.ref == 'refs/heads/release' && 'generate-and-submit' || 'disabled'}}
@@ -61,7 +61,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: 21
       - uses: gradle/gradle-build-action@v3-prerelease
         with:
           gradle-home-cache-cleanup: true
