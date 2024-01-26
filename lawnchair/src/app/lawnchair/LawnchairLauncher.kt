@@ -20,12 +20,18 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.Display
+import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
+import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.factory.LawnchairWidgetHolder
 import app.lawnchair.gestures.GestureController
 import app.lawnchair.gestures.VerticalSwipeTouchController
@@ -41,11 +47,13 @@ import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.unsafeLazy
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.BaseActivity
+import com.android.launcher3.BubbleTextView
 import com.android.launcher3.GestureNavContract
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.popup.SystemShortcut
 import com.android.launcher3.statemanager.StateManager
 import com.android.launcher3.uioverrides.QuickstepLauncher
@@ -226,9 +234,9 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun makeDefaultActivityOptions(splashScreenStyle: Int): ActivityOptionsWrapper {
         val callbacks = RunnableList()
-        val options = if (Utilities.ATLEAST_P || Utilities.ATLEAST_Q) {
+        val options = if (!Utilities.ATLEAST_R) {
             ActivityOptions.makeBasic()
-        } else {
+        } else if (Utilities.ATLEAST_T) {
             ActivityOptions.makeCustomAnimation(
                 this,
                 0,
@@ -237,6 +245,9 @@ class LawnchairLauncher : QuickstepLauncher() {
                 Executors.MAIN_EXECUTOR.handler,
                 null,
             ) { _ -> callbacks.executeAllAndDestroy() }
+        } else {
+            LawnchairQuickstepCompat.activityOptionsCompat
+                .makeCustomAnimation(this, 0, 0, null, Executors.MAIN_EXECUTOR.handler)
         }
         if (Utilities.ATLEAST_T) {
             options.setSplashScreenStyle(splashScreenStyle)
@@ -244,6 +255,46 @@ class LawnchairLauncher : QuickstepLauncher() {
 
         Utilities.allowBGLaunch(options)
         return ActivityOptionsWrapper(options, callbacks)
+    }
+
+    override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
+        return runCatching {
+            super.getActivityLaunchOptions(v, item)
+        }.getOrElse {
+            getActivityLaunchOptionsDefault(v, item)
+        }
+    }
+
+    private fun getActivityLaunchOptionsDefault(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
+        var left = 0
+        var top = 0
+        var width = v!!.measuredWidth
+        var height = v.measuredHeight
+        if (v is BubbleTextView) {
+            // Launch from center of icon, not entire view
+            val icon: Drawable? = v.icon
+            if (icon != null) {
+                val bounds = icon.bounds
+                left = (width - bounds.width()) / 2
+                top = v.getPaddingTop()
+                width = bounds.width()
+                height = bounds.height()
+            }
+        }
+        val options = Utilities.allowBGLaunch(
+            ActivityOptions.makeClipRevealAnimation(
+                v,
+                left,
+                top,
+                width,
+                height,
+            ),
+        )
+        options.setLaunchDisplayId(
+            if (v != null && v.display != null) v.display.displayId else Display.DEFAULT_DISPLAY,
+        )
+        val callback = RunnableList()
+        return ActivityOptionsWrapper(options, callback)
     }
 
     override fun onResume() {
