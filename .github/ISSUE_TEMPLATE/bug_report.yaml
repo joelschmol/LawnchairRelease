@@ -1,0 +1,18 @@
+name: Bug report
+description: Create a report to help us address issues you are facing with the app.
+title: "[BUG] "
+labels: [ bug ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file this issue! Here are a few things to check before clicking the submit button :)
+        1. Before submitting an issue, please check if the same issue is presented in the upstream repository. If so, please file the issue to that repository instead.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
