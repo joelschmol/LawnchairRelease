@@ -2313,7 +2313,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     /**
      * Sets the next pages to bind synchronously on next bind.
-     *
+     * 
      * @param pages should not be null.
      */
     public void setPagesToBindSynchronously(@NonNull IntSet pages) {
@@ -3018,7 +3018,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     /**
      * Finds the first view matching the ordered operators across the given
      * viewgroups in order.
-     *
+     * 
      * @param containers List of ViewGroups to scan, in order of preference.
      * @param operators  List of operators, in order starting from best matching
      *                   operator.
