@@ -20,6 +20,7 @@
 <resources>
     <!-- Launcher theme -->
     <style name="BaseLauncherTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="disabledIconAlpha">.54</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:colorEdgeEffect">#FF757575</item>
         <item name="android:windowActionBar">false</item>
