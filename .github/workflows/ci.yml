@@ -39,7 +39,6 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v3
         with:
-          dependency-graph: ${{ github.ref == 'refs/heads/release' && 'generate-and-submit' || 'disabled'}}
           gradle-home-cache-cleanup: true
           cache-encryption-key: Da25KUVSE5jbGds2zXmfXw==
       - run: ./gradlew assembleLawnWithQuickstepRelease
