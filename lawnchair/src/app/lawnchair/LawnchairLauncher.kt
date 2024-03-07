@@ -106,7 +106,6 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
     private lateinit var colorScheme: ColorScheme
     private var hasBackGesture = false
-    private lateinit var colorScheme: ColorScheme
 
     val gestureController by unsafeLazy { GestureController(this) }
 
