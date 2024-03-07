@@ -196,6 +196,18 @@ class PreferenceManager2 private constructor(private val context: Context) : Pre
         defaultValue = context.resources.getBoolean(R.bool.config_default_show_status_bar),
     )
 
+    val rememberPosition = preference(
+        key = booleanPreferencesKey(name = "all_apps_remember_position"),
+        defaultValue = context.resources.getBoolean(R.bool.config_default_remember_position),
+        onSet = { reloadHelper.reloadGrid() },
+    )
+
+    val showScrollbar = preference(
+        key = booleanPreferencesKey(name = "all_apps_show_scrollbar"),
+        defaultValue = context.resources.getBoolean(R.bool.config_default_show_scrollbar),
+        onSet = { reloadHelper.recreate() },
+    )
+
     val showTopShadow = preference(
         key = booleanPreferencesKey(name = "show_top_shadow"),
         defaultValue = context.resources.getBoolean(R.bool.config_default_show_top_shadow),
@@ -227,7 +239,7 @@ class PreferenceManager2 private constructor(private val context: Context) : Pre
     val hideAppDrawerSearchBar = preference(
         key = booleanPreferencesKey(name = "hide_app_drawer_search_bar"),
         defaultValue = context.resources.getBoolean(R.bool.config_default_hide_app_drawer_search_bar),
-        onSet = { reloadHelper.reloadGrid() },
+        onSet = { reloadHelper.recreate() },
     )
 
     val showHiddenAppsInSearch = preference(
@@ -455,11 +467,6 @@ class PreferenceManager2 private constructor(private val context: Context) : Pre
         parse = { SmartspaceMode.fromString(it) },
         save = { it.toString() },
         onSet = { reloadHelper.recreate() },
-    )
-
-    val smartspaceModeSelection = preference(
-        key = booleanPreferencesKey("smartspace_mode_selection"),
-        defaultValue = false,
     )
 
     val smartspaceAagWidget = preference(

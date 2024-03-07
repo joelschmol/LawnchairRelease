@@ -55,6 +55,7 @@ import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.popup.SystemShortcut
 import com.android.launcher3.statemanager.StateManager
 import com.android.launcher3.uioverrides.QuickstepLauncher
+import com.android.launcher3.uioverrides.states.AllAppsState
 import com.android.launcher3.uioverrides.states.OverviewState
 import com.android.launcher3.util.ActivityOptionsWrapper
 import com.android.launcher3.util.Executors
@@ -95,6 +96,15 @@ class LawnchairLauncher : QuickstepLauncher() {
             }
         }
     }
+    private val rememberPositionStateListener = object : StateManager.StateListener<LauncherState> {
+        override fun onStateTransitionStart(toState: LauncherState) {
+            if (toState is AllAppsState) {
+                mAppsView.activeRecyclerView.restoreScrollPosition()
+            }
+        }
+        override fun onStateTransitionComplete(finalState: LauncherState) {}
+    }
+    private lateinit var colorScheme: ColorScheme
     private var hasBackGesture = false
     private lateinit var colorScheme: ColorScheme
 
@@ -132,6 +142,16 @@ class LawnchairLauncher : QuickstepLauncher() {
                     removeStateListener(noStatusBarStateListener)
                 } else {
                     addStateListener(noStatusBarStateListener)
+                }
+            }
+        }.launchIn(scope = lifecycleScope)
+
+        preferenceManager2.rememberPosition.get().onEach {
+            with(launcher.stateManager) {
+                if (it) {
+                    addStateListener(rememberPositionStateListener)
+                } else {
+                    removeStateListener(rememberPositionStateListener)
                 }
             }
         }.launchIn(scope = lifecycleScope)
@@ -174,7 +194,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun getSupportedShortcuts(): Stream<SystemShortcut.Factory<*>> =
-        Stream.concat(super.getSupportedShortcuts(), Stream.of(LawnchairShortcut.CUSTOMIZE))
+        Stream.concat(super.getSupportedShortcuts(), Stream.of(LawnchairShortcut.UNINSTALL, LawnchairShortcut.CUSTOMIZE))
 
     override fun updateTheme() {
         if (themeProvider.colorScheme != colorScheme) {
