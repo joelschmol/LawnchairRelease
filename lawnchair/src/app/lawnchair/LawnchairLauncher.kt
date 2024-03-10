@@ -19,7 +19,7 @@ package app.lawnchair
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.content.IntentSender
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Display
@@ -251,20 +251,18 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun makeDefaultActivityOptions(splashScreenStyle: Int): ActivityOptionsWrapper {
         val callbacks = RunnableList()
-        val options = if (!Utilities.ATLEAST_R) {
-            ActivityOptions.makeBasic()
-        } else if (Utilities.ATLEAST_T) {
-            ActivityOptions.makeCustomAnimation(
+        val options = if (Utilities.ATLEAST_Q) {
+            LawnchairQuickstepCompat.activityOptionsCompat.makeCustomAnimation(
                 this,
                 0,
                 0,
-                Color.TRANSPARENT,
                 Executors.MAIN_EXECUTOR.handler,
                 null,
-            ) { _ -> callbacks.executeAllAndDestroy() }
+            ) {
+                callbacks.executeAllAndDestroy()
+            }
         } else {
-            LawnchairQuickstepCompat.activityOptionsCompat
-                .makeCustomAnimation(this, 0, 0, null, Executors.MAIN_EXECUTOR.handler)
+            ActivityOptions.makeBasic()
         }
         if (Utilities.ATLEAST_T) {
             options.setSplashScreenStyle(splashScreenStyle)
