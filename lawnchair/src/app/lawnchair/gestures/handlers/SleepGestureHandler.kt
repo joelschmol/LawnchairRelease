@@ -51,9 +51,9 @@ class SleepGestureHandler(context: Context) : GestureHandler(context) {
     }
 
     private val methods = listOf(
+        SleepMethodDeviceAdmin(context),
         SleepMethodRoot(context),
         SleepMethodPieAccessibility(context),
-        SleepMethodDeviceAdmin(context),
     )
 
     sealed class SleepMethod(protected val context: Context) {
