@@ -3,11 +3,15 @@ description: Create a report to help us address issues you are facing with the a
 title: "[BUG] "
 labels: [ bug ]
 body:
-  - type: markdown
+  - type: checkboxes
     attributes:
-      value: |
-        Thanks for taking the time to file this issue! Here are a few things to check before clicking the submit button :)
-        1. Before submitting an issue, please check if the same issue is presented in the upstream repository. If so, please file the issue to that repository instead.
+      label: Checklist
+      description: Ensure you are using the latest build.
+      options:
+        - label: No one has submitted a similar or identical bug report before.
+          required: true
+        - label: Please check if the same issue is presented in the upstream repository build artifacts. If so, please file the issue to that repository instead.
+          required: true
 
   - type: textarea
     id: bug-description
