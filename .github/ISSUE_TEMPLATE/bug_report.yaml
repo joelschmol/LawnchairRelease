@@ -10,7 +10,7 @@ body:
       options:
         - label: No one has submitted a similar or identical bug report before.
           required: true
-        - label: Please check if the same issue is presented in the upstream repository build artifacts. If so, please file the issue to that repository instead.
+        - label: Please check if the same issue is presented in [the upstream nightly artifact](https://github.com/LawnchairLauncher/lawnchair/releases/tag/nightly). If so, please file the issue to that repository instead.
           required: true
 
   - type: textarea
