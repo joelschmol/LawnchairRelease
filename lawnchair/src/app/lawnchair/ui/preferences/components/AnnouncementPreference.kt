@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Launch
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Launch
 import androidx.compose.material.icons.rounded.NewReleases
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,7 +65,9 @@ fun AnnouncementPreference(
         announcements.forEachIndexed { index, announcement ->
             var show by remember { mutableStateOf(true) }
             AnnouncementItem(show, { show = false }, announcement)
-            if (index != announcements.lastIndex && show) Spacer(modifier = Modifier.height(16.dp))
+            if (index != announcements.lastIndex && show && (!announcement.test || BuildConfig.DEBUG)) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
@@ -149,7 +151,7 @@ private fun AnnouncementPreferenceItemContent(
             ) {
                 if (hasLink) {
                     Icon(
-                        imageVector = Icons.Rounded.Launch,
+                        imageVector = Icons.AutoMirrored.Rounded.Launch,
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = null,
                     )
