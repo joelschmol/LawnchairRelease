@@ -12,13 +12,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.TipsAndUpdates
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme as Material3Theme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,9 +36,9 @@ import app.lawnchair.ui.OverflowMenu
 import app.lawnchair.ui.preferences.LocalNavController
 import app.lawnchair.ui.preferences.Routes
 import app.lawnchair.ui.preferences.components.AnnouncementPreference
+import app.lawnchair.ui.preferences.components.controls.PreferenceCategory
 import app.lawnchair.ui.preferences.components.controls.WarningPreference
 import app.lawnchair.ui.preferences.components.layout.ClickableIcon
-import app.lawnchair.ui.preferences.components.layout.PreferenceCategory
 import app.lawnchair.ui.preferences.components.layout.PreferenceDivider
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.preferences.components.layout.PreferenceTemplate
@@ -106,6 +105,13 @@ fun PreferencesDashboard() {
         )
 
         PreferenceCategory(
+            label = stringResource(R.string.drawer_search_label),
+            description = stringResource(R.string.drawer_search_description),
+            iconResource = R.drawable.ic_search,
+            route = Routes.SEARCH,
+        )
+
+        PreferenceCategory(
             label = stringResource(R.string.folders_label),
             description = stringResource(R.string.folders_description),
             iconResource = R.drawable.ic_folder,
@@ -155,34 +161,34 @@ fun PreferencesOverflowMenu() {
         DropdownMenuItem(onClick = {
             openAppInfo(context)
             hideMenu()
-        }) {
+        }, text = {
             Text(text = stringResource(id = R.string.app_info_drop_target_label))
-        }
+        })
         DropdownMenuItem(onClick = {
             restartLauncher(context)
             hideMenu()
-        }) {
+        }, text = {
             Text(text = stringResource(id = R.string.debug_restart_launcher))
-        }
+        })
         DropdownMenuItem(onClick = {
             navController.navigate(experimentalFeaturesRoute)
             hideMenu()
-        }) {
+        }, text = {
             Text(text = stringResource(id = R.string.experimental_features_label))
-        }
+        })
         PreferenceDivider(modifier = Modifier.padding(vertical = 8.dp))
         DropdownMenuItem(onClick = {
             navController.navigate("/${Routes.CREATE_BACKUP}/")
             hideMenu()
-        }) {
+        }, text = {
             Text(text = stringResource(id = R.string.create_backup))
-        }
+        })
         DropdownMenuItem(onClick = {
             openRestoreBackup()
             hideMenu()
-        }) {
+        }, text = {
             Text(text = stringResource(id = R.string.restore_backup))
-        }
+        })
     }
 }
 
@@ -191,11 +197,11 @@ fun PreferencesDebugWarning() {
     Surface(
         modifier = Modifier.padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.large,
-        color = Material3Theme.colorScheme.errorContainer,
+        color = MaterialTheme.colorScheme.errorContainer,
     ) {
         WarningPreference(
             // Don't move to strings.xml, no need to translate this warning
-            text = "You are currently using a development build. Use at your own risk!",
+            text = "You are using a development build, which may contain bugs and broken features. Use at your own risk!",
         )
     }
 }
@@ -206,7 +212,7 @@ fun PreferencesSetDefaultLauncherWarning() {
     Surface(
         modifier = Modifier.padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.large,
-        color = Material3Theme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         PreferenceTemplate(
             modifier = Modifier.clickable {
@@ -219,13 +225,13 @@ fun PreferencesSetDefaultLauncherWarning() {
             description = {
                 Text(
                     text = stringResource(id = R.string.set_default_launcher_tip),
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             startWidget = {
                 Icon(
                     imageVector = Icons.Rounded.TipsAndUpdates,
-                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     contentDescription = null,
                 )
             },

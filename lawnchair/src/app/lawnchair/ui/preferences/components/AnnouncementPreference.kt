@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Launch
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Launch
 import androidx.compose.material.icons.rounded.NewReleases
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,19 +62,22 @@ fun AnnouncementPreference(
     announcements: ImmutableList<Announcement>,
 ) {
     Column {
-        announcements.forEach { announcement ->
-            AnnouncementItem(announcement)
-            Spacer(modifier = Modifier.height(16.dp))
+        announcements.forEachIndexed { index, announcement ->
+            var show by remember { mutableStateOf(true) }
+            AnnouncementItem(show, { show = false }, announcement)
+            if (index != announcements.lastIndex && show && (!announcement.test || BuildConfig.DEBUG)) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
     }
 }
 
 @Composable
 private fun AnnouncementItem(
+    show: Boolean,
+    onClose: () -> Unit,
     announcement: Announcement,
 ) {
-    var show by remember { mutableStateOf(true) }
-
     ExpandAndShrink(
         visible = show && announcement.active &&
             announcement.text.isNotBlank() &&
@@ -83,7 +86,7 @@ private fun AnnouncementItem(
         AnnouncementItemContent(
             text = announcement.text,
             url = announcement.url,
-            onClose = { show = false },
+            onClose = onClose,
         )
     }
 }
@@ -148,7 +151,7 @@ private fun AnnouncementPreferenceItemContent(
             ) {
                 if (hasLink) {
                     Icon(
-                        imageVector = Icons.Rounded.Launch,
+                        imageVector = Icons.AutoMirrored.Rounded.Launch,
                         tint = MaterialTheme.colorScheme.primary,
                         contentDescription = null,
                     )
