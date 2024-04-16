@@ -34,10 +34,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import app.lawnchair.icons.CustomIconPack
 import app.lawnchair.icons.IconPack
 import app.lawnchair.icons.IconPackProvider
@@ -48,7 +44,6 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceGroupDescription
 import app.lawnchair.ui.preferences.components.layout.PreferenceLazyColumn
 import app.lawnchair.ui.preferences.components.layout.PreferenceSearchScaffold
 import app.lawnchair.ui.preferences.components.layout.verticalGridItems
-import app.lawnchair.ui.preferences.preferenceGraph
 import app.lawnchair.ui.util.LazyGridLayout
 import app.lawnchair.ui.util.resultSender
 import app.lawnchair.util.requireSystemService
@@ -58,26 +53,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-fun NavGraphBuilder.iconPickerGraph(route: String) {
-    preferenceGraph(route, {
-        IconPickerPreference(packageName = "")
-    }) { subRoute ->
-        composable(
-            route = subRoute("{packageName}"),
-            arguments = listOf(
-                navArgument("packageName") { type = NavType.StringType },
-            ),
-        ) { backStackEntry ->
-            val args = backStackEntry.arguments!!
-            val packageName = args.getString("packageName")!!
-            IconPickerPreference(packageName)
-        }
-    }
-}
-
 @Composable
 fun IconPickerPreference(
     packageName: String,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val iconPack = remember {
@@ -109,6 +88,7 @@ fun IconPickerPreference(
 
     PreferenceSearchScaffold(
         value = searchQuery,
+        modifier = modifier,
         onValueChange = { searchQuery = it },
         placeholder = {
             Text(
@@ -149,8 +129,8 @@ fun IconPickerGrid(
     scaffoldPadding: PaddingValues,
     iconPack: IconPack,
     searchQuery: String,
-    onClickItem: (item: IconPickerItem) -> Unit,
     modifier: Modifier = Modifier,
+    onClickItem: (item: IconPickerItem) -> Unit,
 ) {
     var loadFailed by remember { mutableStateOf(false) }
     val categoriesFlow = remember {
@@ -199,10 +179,9 @@ fun IconPickerGrid(
                     IconPreview(
                         iconPack = iconPack,
                         iconItem = item,
-                        onClick = {
-                            onClickItem(item)
-                        },
-                    )
+                    ) {
+                        onClickItem(item)
+                    }
                 }
             }
         }
@@ -220,6 +199,7 @@ fun IconPickerGrid(
 fun IconPreview(
     iconPack: IconPack,
     iconItem: IconPickerItem,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     val drawable by produceState<Drawable?>(initialValue = null, iconPack, iconItem) {
@@ -228,7 +208,7 @@ fun IconPreview(
         }
     }
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .clickable(onClick = onClick)
             .padding(8.dp),
