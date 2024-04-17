@@ -42,16 +42,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import app.lawnchair.font.FontCache
 import app.lawnchair.font.googlefonts.GoogleFontsListing
 import app.lawnchair.preferences.BasePreferenceManager
 import app.lawnchair.preferences.PreferenceAdapter
 import app.lawnchair.preferences.getAdapter
-import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.ui.AndroidText
 import app.lawnchair.ui.OverflowMenu
 import app.lawnchair.ui.preferences.components.layout.PreferenceDivider
@@ -60,25 +55,7 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceLazyColumn
 import app.lawnchair.ui.preferences.components.layout.PreferenceSearchScaffold
 import app.lawnchair.ui.preferences.components.layout.PreferenceTemplate
 import app.lawnchair.ui.preferences.components.layout.preferenceGroupItems
-import app.lawnchair.ui.preferences.preferenceGraph
 import com.android.launcher3.R
-
-fun NavGraphBuilder.fontSelectionGraph(route: String) {
-    preferenceGraph(route, {}) { subRoute ->
-        composable(
-            route = subRoute("{prefKey}"),
-            arguments = listOf(
-                navArgument("prefKey") { type = NavType.StringType },
-            ),
-        ) { backStackEntry ->
-            val args = backStackEntry.arguments!!
-            val prefKey = args.getString("prefKey")!!
-            val pref = preferenceManager().prefsMap[prefKey]
-                as? BasePreferenceManager.FontPref ?: return@composable
-            FontSelection(pref)
-        }
-    }
-}
 
 private enum class ContentType {
     ADD_BUTTON,
@@ -88,6 +65,7 @@ private enum class ContentType {
 @Composable
 fun FontSelection(
     fontPref: BasePreferenceManager.FontPref,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val customFonts by remember { FontCache.INSTANCE.get(context).customFonts }.collectAsState(initial = emptyList())
@@ -135,6 +113,7 @@ fun FontSelection(
     PreferenceSearchScaffold(
         value = searchQuery,
         onValueChange = { searchQuery = it },
+        modifier = modifier,
         placeholder = {
             Text(
                 text = stringResource(id = R.string.label_search),
@@ -221,11 +200,12 @@ fun FontSelection(
 private fun FontSelectionItem(
     adapter: PreferenceAdapter<FontCache.Font>,
     family: FontCache.Family,
+    modifier: Modifier = Modifier,
     onDelete: (() -> Unit)? = null,
 ) {
     val selected = family.variants.any { it.value == adapter.state.value }
     PreferenceTemplate(
-        modifier = Modifier
+        modifier = modifier
             .clickable { adapter.onChange(family.default) },
         title = {
             Box(modifier = Modifier.height(52.dp)) {
@@ -284,11 +264,12 @@ private val VariantButtonContentPadding = PaddingValues(
 private fun VariantDropdown(
     adapter: PreferenceAdapter<FontCache.Font>,
     family: FontCache.Family,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .wrapContentWidth()
             .padding(end = 16.dp),
     ) {

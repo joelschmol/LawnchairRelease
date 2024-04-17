@@ -60,11 +60,14 @@ fun AnnouncementPreference() {
 @Composable
 fun AnnouncementPreference(
     announcements: ImmutableList<Announcement>,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(
+        modifier = modifier,
+    ) {
         announcements.forEachIndexed { index, announcement ->
             var show by remember { mutableStateOf(true) }
-            AnnouncementItem(show, { show = false }, announcement)
+            AnnouncementItem(show, announcement) { show = false }
             if (index != announcements.lastIndex && show && (!announcement.test || BuildConfig.DEBUG)) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -75,10 +78,12 @@ fun AnnouncementPreference(
 @Composable
 private fun AnnouncementItem(
     show: Boolean,
-    onClose: () -> Unit,
     announcement: Announcement,
+    modifier: Modifier = Modifier,
+    onClose: () -> Unit,
 ) {
     ExpandAndShrink(
+        modifier = modifier,
         visible = show && announcement.active &&
             announcement.text.isNotBlank() &&
             (!announcement.test || BuildConfig.DEBUG),
@@ -95,10 +100,11 @@ private fun AnnouncementItem(
 private fun AnnouncementItemContent(
     text: String,
     url: String?,
+    modifier: Modifier = Modifier,
     onClose: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp, 0.dp, 16.dp, 0.dp),
         shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -111,13 +117,14 @@ private fun AnnouncementItemContent(
 private fun AnnouncementPreferenceItemContent(
     text: String,
     url: String?,
+    modifier: Modifier = Modifier,
     onClose: (() -> Unit)?,
 ) {
     val context = LocalContext.current
     val hasLink = !url.isNullOrBlank()
 
     PreferenceTemplate(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .addIf(hasLink) {
                 clickable {

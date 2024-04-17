@@ -38,13 +38,14 @@ fun RgbColorSlider(
     colorStart: Color,
     colorEnd: Color,
     value: Int,
+    modifier: Modifier = Modifier,
     onValueChange: (Float) -> Unit,
 ) {
     val step = 0f
     val rgbRange = 0f..255f
 
     PreferenceTemplate(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 12.dp),
         title = {
@@ -102,6 +103,7 @@ fun RgbColorSlider(
 fun HsbColorSlider(
     type: HsbSliderType,
     value: Float,
+    modifier: Modifier = Modifier,
     onValueChange: (Float) -> Unit,
 ) {
     val step = 0f
@@ -190,6 +192,7 @@ fun HsbColorSlider(
             }
         },
         applyPaddings = false,
+        modifier = modifier,
     )
 }
 

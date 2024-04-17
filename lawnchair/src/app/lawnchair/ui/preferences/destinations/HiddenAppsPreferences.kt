@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
@@ -36,7 +35,6 @@ import app.lawnchair.ui.preferences.components.AppItemPlaceholder
 import app.lawnchair.ui.preferences.components.layout.PreferenceLazyColumn
 import app.lawnchair.ui.preferences.components.layout.PreferenceScaffold
 import app.lawnchair.ui.preferences.components.layout.preferenceGroupItems
-import app.lawnchair.ui.preferences.preferenceGraph
 import app.lawnchair.util.App
 import app.lawnchair.util.appComparator
 import app.lawnchair.util.appsState
@@ -45,12 +43,10 @@ import java.util.Comparator.comparing
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toPersistentSet
 
-fun NavGraphBuilder.hiddenAppsGraph(route: String) {
-    preferenceGraph(route, { HiddenAppsPreferences() })
-}
-
 @Composable
-fun HiddenAppsPreferences() {
+fun HiddenAppsPreferences(
+    modifier: Modifier = Modifier,
+) {
     val adapter = preferenceManager2().hiddenApps.getAdapter()
     val hiddenApps by adapter.state
     val pageTitle =
@@ -63,6 +59,7 @@ fun HiddenAppsPreferences() {
     val state = rememberLazyListState()
     PreferenceScaffold(
         label = pageTitle,
+        modifier = modifier,
         isExpandedScreen = LocalIsExpandedScreen.current,
     ) {
         Crossfade(targetState = apps.isNotEmpty(), label = "") { present ->
