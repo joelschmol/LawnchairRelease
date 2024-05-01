@@ -7,10 +7,11 @@ plugins {
     id 'com.android.library' version "8.3.2" apply false
     id 'com.android.test' version '8.3.2' apply false
     id 'androidx.baselineprofile' version '1.2.4'
-    id 'org.jetbrains.kotlin.android' version "1.9.23"
-    id 'org.jetbrains.kotlin.plugin.parcelize' version "1.9.23"
-    id 'org.jetbrains.kotlin.plugin.serialization' version "1.9.23"
-    id "com.google.devtools.ksp" version "1.9.23-1.0.20"
+    id 'org.jetbrains.kotlin.android' version "2.0.0-RC2"
+    id 'org.jetbrains.kotlin.plugin.compose' version "2.0.0-RC2"
+    id 'org.jetbrains.kotlin.plugin.parcelize' version "2.0.0-RC2"
+    id 'org.jetbrains.kotlin.plugin.serialization' version "2.0.0-RC2"
+    id "com.google.devtools.ksp" version "2.0.0-RC1-1.0.20"
     id 'com.google.protobuf' version "0.9.4"
     id 'app.cash.licensee' version "1.11.0"
     id 'dev.rikka.tools.refine' version "4.4.0"
@@ -149,15 +150,15 @@ android {
         }
     }
 
+    androidResources {
+        generateLocaleConfig true
+    }
+
     buildFeatures {
         aidl true
         buildConfig true
         compose true
         resValues true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.12"
     }
 
     final def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -200,6 +201,7 @@ android {
 
     buildTypes {
         all {
+            pseudoLocalesEnabled true
             resValue("string", "derived_app_name", "Lawnchair")
             signingConfig releaseSigning
         }
@@ -386,7 +388,7 @@ dependencies {
     implementation 'com.airbnb.android:lottie:6.4.0'
 
     // Smartspacer
-    implementation('com.kieronquinn.smartspacer:sdk-client:1.0.8') {
+    implementation('com.kieronquinn.smartspacer:sdk-client:1.0.9') {
         exclude group: "com.github.skydoves", module: "balloon"
     }
 }
@@ -406,7 +408,7 @@ spotless {
     kotlin {
         target("lawnchair/src/**/*.kt")
         ktlint().customRuleSets([
-            "io.nlopez.compose.rules:ktlint:0.3.15",
+            "io.nlopez.compose.rules:ktlint:0.3.19",
         ]).editorConfigOverride([
             "ktlint_compose_compositionlocal-allowlist": "disabled",
         ])
