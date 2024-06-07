@@ -11,7 +11,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose' version "2.0.0"
     id 'org.jetbrains.kotlin.plugin.parcelize' version "2.0.0"
     id 'org.jetbrains.kotlin.plugin.serialization' version "2.0.0"
-    id "com.google.devtools.ksp" version "2.0.0-1.0.21"
+    id "com.google.devtools.ksp" version "2.0.0-1.0.22"
     id 'com.google.protobuf' version "0.9.4"
     id 'app.cash.licensee' version "1.11.0"
     id 'dev.rikka.tools.refine' version "4.4.0"
@@ -42,7 +42,7 @@ allprojects {
     }
 
     plugins.withId('com.google.protobuf') {
-        def protocVersion = '4.27.0'
+        def protocVersion = '4.27.1'
         protobuf {
             // Configure the protoc executable
             protoc {
@@ -334,7 +334,7 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.2.1"
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0'
     implementation "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7"
     implementation 'com.github.ChickenHook:RestrictionBypass:2.2'
     implementation 'dev.rikka.tools.refine:runtime:4.4.0'
@@ -362,7 +362,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-drawablepainter:$accompanistVersion"
     implementation "com.google.accompanist:accompanist-permissions:$accompanistVersion"
     implementation "com.google.android.material:material:1.12.0"
-    implementation "io.github.fornewid:material-motion-compose-core:1.2.0"
+    implementation "io.github.fornewid:material-motion-compose-core:1.2.1"
     implementation 'dev.kdrag0n:colorkt:1.0.5'
     implementation 'io.coil-kt:coil-compose:2.6.0'
     implementation 'me.xdrop:fuzzywuzzy:1.4.0'
@@ -408,7 +408,7 @@ spotless {
     kotlin {
         target("lawnchair/src/**/*.kt")
         ktlint().customRuleSets([
-            "io.nlopez.compose.rules:ktlint:0.4.3",
+            "io.nlopez.compose.rules:ktlint:0.4.4",
         ]).editorConfigOverride([
             "ktlint_compose_compositionlocal-allowlist": "disabled",
         ])
