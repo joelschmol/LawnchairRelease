@@ -64,3 +64,22 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
       - run: ./gradlew spotlessCheck
+
+  nightly-release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'Goooler' && github.ref == 'refs/heads/trunk' && github.event_name == 'push'
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+      # Note the # and () symbols are not supported in GitHub Release filenames, even manually
+      - name: Export APK_NAME for later use
+        run: echo "APK_NAME=Lawnchair.Debug.${{ github.ref_name }}.Nightly-CI_${{ github.run_number }}-$(echo ${{ github.sha }} | cut -c1-7).apk" >> $GITHUB_ENV
+      - name: Delete release if exist then create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view "nightly" && gh release delete "nightly" -y --cleanup-tag
+          gh release create "nightly" "./Release APK/apk/lawnWithQuickstep/release/"*.apk "./Release APK/mapping/lawnWithQuickstepRelease/"mapping.txt -p -t "Lawnchair Nightly" --generate-notes
