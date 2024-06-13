@@ -115,6 +115,8 @@ allprojects {
     }
 }
 
+final def buildTime = new Date().format("yyyyMMddHHmm")
+
 final def buildCommit = providers.exec {
     commandLine('git', 'rev-parse', '--short=7', 'HEAD')
 }.standardOutput.asText.get().trim()
@@ -146,7 +148,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "Lawnchair ${variant.versionName}.apk"
+            outputFileName = "Lawnchair-${versionString}-${buildTime}-${buildCommit}.apk"
         }
     }
 
