@@ -160,23 +160,27 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
         }
 
         if (appResults.size == 1 && searchApps && context.isDefaultLauncher()) {
-            val singleAppResult = appResults.first()
-            val shortcuts = getShortcuts(singleAppResult)
-            if (shortcuts.isNotEmpty()) {
-                searchTargets.add(generateSearchTarget.getHeaderTarget(SPACE))
-                searchTargets.add(createSearchTarget(singleAppResult, true))
-                searchTargets.addAll(shortcuts.map(::createSearchTarget))
+            val singleAppResult = appResults.firstOrNull()
+            val shortcuts = singleAppResult?.let { getShortcuts(it) }
+            if (shortcuts != null) {
+                if (shortcuts.isNotEmpty()) {
+                    searchTargets.add(generateSearchTarget.getHeaderTarget(SPACE))
+                    searchTargets.add(createSearchTarget(singleAppResult, true))
+                    searchTargets.addAll(shortcuts.map(::createSearchTarget))
+                }
             }
         }
 
         val suggestions = filterByType(localSearchResults, WEB_SUGGESTION)
         if (suggestions.isNotEmpty()) {
+            val suggestionsHeader = generateSearchTarget.getHeaderTarget(context.getString(R.string.all_apps_search_result_suggestions))
+            searchTargets.add(suggestionsHeader)
             searchTargets.addAll(suggestions.map { generateSearchTarget.getSuggestionTarget(it.resultData as String) })
         }
 
-        val calculator = filterByType(localSearchResults, CALCULATOR).first()
-        val calcData = calculator.resultData as Calculation
-        if (calcData.isValid) {
+        val calculator = filterByType(localSearchResults, CALCULATOR).firstOrNull()
+        val calcData = calculator?.resultData as? Calculation
+        if (calcData != null && calcData.isValid) {
             val calculatorHeader = generateSearchTarget.getHeaderTarget(context.getString(R.string.all_apps_search_result_calculator))
             searchTargets.add(calculatorHeader)
             searchTargets.add(
@@ -319,8 +323,12 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
             }
 
             val settingsDeferred = async {
-                findSettingsByNameAndAction(query, maxSettingsEntryCount)
-                    .map { SearchResult(SETTINGS, it) }
+                if (prefs.searchResultSettingsEntry.get()) {
+                    findSettingsByNameAndAction(query, maxSettingsEntryCount)
+                        .map { SearchResult(SETTINGS, it) }
+                } else {
+                    emptyList()
+                }
             }
 
             val startPageSuggestionsDeferred = async {
