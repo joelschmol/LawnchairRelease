@@ -72,7 +72,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
       - name: Generate release name with current date
         run: echo "RELEASE_NAME=14.0.0-$(date +'%Y%m%d')" >> $GITHUB_ENV
