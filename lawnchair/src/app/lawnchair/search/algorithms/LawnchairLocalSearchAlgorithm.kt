@@ -67,6 +67,7 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
     private var searchApps = true
     private var enableFuzzySearch = false
     private var useWebSuggestions = true
+    private var webSuggestionsProvider = ""
 
     private val prefs: PreferenceManager = PreferenceManager.getInstance(context)
     private val pref2 = PreferenceManager2.getInstance(context)
@@ -94,6 +95,10 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
 
         useWebSuggestions = prefs.searchResultStartPageSuggestion.get()
         searchApps = prefs.searchResultApps.get()
+
+        pref2.webSuggestionProvider.onEach(launchIn = coroutineScope) {
+            webSuggestionsProvider = it.toString()
+        }
 
         pref2.maxAppSearchResultCount.onEach(launchIn = coroutineScope) {
             maxAppResultsCount = it
@@ -206,7 +211,7 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
         searchTargets.add(generateSearchTarget.getHeaderTarget(SPACE))
         if (useWebSuggestions) {
             withContext(Dispatchers.IO) {
-                searchTargets.add(generateSearchTarget.getStartPageSearchItem(query))
+                searchTargets.add(generateSearchTarget.getWebSearchItem(query, webSuggestionsProvider))
             }
         }
         generateSearchTarget.getMarketSearchItem(query)?.let { searchTargets.add(it) }
@@ -238,12 +243,17 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
         localSearchResults: MutableList<SearchResult>,
         searchTargets: MutableList<SearchTargetCompat>,
     ) {
+        val suggestionProvider = webSuggestionsProvider
         val suggestions = filterByType(localSearchResults, WEB_SUGGESTION)
         if (suggestions.isNotEmpty()) {
             val suggestionsHeader =
                 generateSearchTarget.getHeaderTarget(context.getString(R.string.all_apps_search_result_suggestions))
             searchTargets.add(suggestionsHeader)
-            searchTargets.addAll(suggestions.map { generateSearchTarget.getSuggestionTarget(it.resultData as String) })
+            searchTargets.addAll(
+                suggestions.map {
+                    generateSearchTarget.getSuggestionTarget(it.resultData as String, suggestionProvider)
+                },
+            )
         }
 
         val calculator = filterByType(localSearchResults, CALCULATOR).firstOrNull()
@@ -273,6 +283,7 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
             searchTargets.addAll(settings.mapNotNull { generateSearchTarget.getSettingSearchItem(it.resultData as SettingInfo) })
         }
 
+        // todo refactor to only show when search is first clicked
         val recentKeyword = filterByType(localSearchResults, HISTORY)
         if (recentKeyword.isNotEmpty()) {
             val recentKeywordHeader = generateSearchTarget.getHeaderTarget(
@@ -280,7 +291,7 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
                 HEADER_JUSTIFY,
             )
             searchTargets.add(recentKeywordHeader)
-            searchTargets.addAll(recentKeyword.map { generateSearchTarget.getRecentKeywordTarget(it.resultData as RecentKeyword) })
+            searchTargets.addAll(recentKeyword.map { generateSearchTarget.getRecentKeywordTarget(it.resultData as RecentKeyword, suggestionProvider) })
         }
 
         val files = filterByType(localSearchResults, FILES)
@@ -351,7 +362,7 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
                     val timeout = maxWebSuggestionDelay.toLong()
                     val result = withTimeoutOrNull(timeout) {
                         if (prefs.searchResultStartPageSuggestion.get()) {
-                            WebSearchProvider.fromString("startpage").getSuggestions(query, maxWebSuggestionsCount).map {
+                            WebSearchProvider.fromString(webSuggestionsProvider).getSuggestions(query, maxWebSuggestionsCount).map {
                                 SearchResult(
                                     WEB_SUGGESTION,
                                     it,
