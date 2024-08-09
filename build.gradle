@@ -3,9 +3,9 @@ import com.android.build.gradle.api.AndroidBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id 'com.android.application' version "8.5.1"
-    id 'com.android.library' version "8.5.1" apply false
-    id 'com.android.test' version '8.5.1' apply false
+    id 'com.android.application' version "8.5.2"
+    id 'com.android.library' version "8.5.2" apply false
+    id 'com.android.test' version '8.5.2' apply false
     id 'androidx.baselineprofile' version '1.2.4'
     id 'org.jetbrains.kotlin.android' version "2.0.10"
     id 'org.jetbrains.kotlin.plugin.compose' version "2.0.10"
@@ -355,7 +355,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.activity:activity-compose:1.9.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4"
-    implementation "androidx.navigation:navigation-compose:2.8.0-beta06"
+    implementation "androidx.navigation:navigation-compose:2.8.0-beta07"
     implementation "androidx.palette:palette-ktx:1.0.0"
     implementation "androidx.slice:slice-core:1.1.0-alpha02"
     def accompanistVersion = '0.34.0'
@@ -388,6 +388,9 @@ dependencies {
 
     implementation 'com.airbnb.android:lottie:6.5.0'
 
+    // Compose drag and drop library
+    implementation 'sh.calvin.reorderable:reorderable:2.3.0'
+
     // Smartspacer
     implementation('com.kieronquinn.smartspacer:sdk-client:1.0.11') {
         exclude group: "com.github.skydoves", module: "balloon"
@@ -411,7 +414,7 @@ spotless {
     kotlin {
         target("lawnchair/src/**/*.kt")
         ktlint().customRuleSets([
-            "io.nlopez.compose.rules:ktlint:0.4.9",
+            "io.nlopez.compose.rules:ktlint:0.4.10",
         ]).editorConfigOverride([
             "ktlint_compose_compositionlocal-allowlist": "disabled",
         ])
