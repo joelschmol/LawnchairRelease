@@ -395,6 +395,7 @@
 
     <string name="acknowledgements">Acknowledgements</string>
     <string name="translate">Translate</string>
+    <string name="donate">Donate</string>
 
     <!--
 
@@ -470,6 +471,10 @@
     <string name="home_screen_rotation_label">Home screen rotation</string>
     <string name="home_screen_rotation_description">Allow home screen rotation when device is rotated</string>
 
+    <string name="wallpaper_blur">Enable wallpaper blur</string>
+    <string name="wallpaper_background_blur">Blur intensity</string>
+    <string name="wallpaper_background_blur_factor">Factor threshold</string>
+
     <string name="auto_add_shortcuts_label">Add new apps to home screen</string>
 
     <string name="minus_one_enable">Show feed</string>
@@ -524,6 +529,9 @@
     <string name="hotseat_mode_lawnchair" translatable="false">Lawnchair</string>
     <string name="hotseat_mode_google_search">Google Search bar</string>
 
+    <string name="qsb_hotseat_background_transparency">Background opacity</string>
+    <string name="qsb_hotseat_stroke_width">Outline width</string>
+    <string name="qsb_hotseat_stroke_color">Outline color</string>
     <string name="corner_radius_label">Corner radius</string>
     <string name="apply_accent_color_label">Apply accent color</string>
     <string name="search_provider">Search provider</string>
@@ -545,6 +553,7 @@
     <string name="search_provider_github" translatable="false">GitHub</string>
     <string name="search_provider_youtube" translatable="false">YouTube</string>
     <string name="search_provider_pixel_search" translatable="false">Pixel Search</string>
+    <string name="search_provider_yandex" translatable="false">Yandex</string>
 
     <string name="search_provider_sponsored_description">%1$s and Lawnchair have a revenue share agreement.\n\nSearching with %1$s helps support Lawnchair.</string>
 
@@ -688,5 +697,6 @@
     <string name="hotseat_mode_lawnchair_compose">Lawnchair (compose)</string>
 
     <string name="allapps_web_suggestion_provider_label">Web suggestion provider</string>
-    <string name="allapps_use_web_suggestion_icon_label">Use web suggestion provider icon in search bar</string>
+    <string name="allapps_use_web_suggestion_icon_label">Show web suggestion provider icon in search bar</string>
+    <string name="allapps_match_qsb_style_label">Match dock search bar style</string>
 </resources>
