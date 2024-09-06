@@ -122,8 +122,6 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
         }
     }
 
-    private val searchUtils = SearchUtils(maxAppResultsCount, hiddenApps, hiddenAppsInSearch)
-
     override fun doSearch(query: String, callback: SearchCallback<BaseAllAppsAdapter.AdapterItem>) {
         appState.model.enqueueModelUpdateTask(object : BaseModelUpdateTask() {
             override fun execute(app: LauncherAppState, dataModel: BgDataModel, apps: AllAppsList) {
@@ -148,30 +146,18 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
         prefs: PreferenceManager,
     ): Flow<List<BaseAllAppsAdapter.AdapterItem>> = channelFlow {
         val allResults = mutableListOf<BaseAllAppsAdapter.AdapterItem>()
-        var appIndex = 0
 
         launch {
-            getAppSearchResults(apps, query).collect { appResults ->
-                allResults.addAll(appResults)
-                appIndex = appResults.size
-                send(allResults.toList())
-            }
-        }
-
-        launch {
-            getLocalSearchResults(query, prefs).collect { localResults ->
-                // Insert local results at the appropriate position
-                val insertIndex = appIndex
-                if (insertIndex >= 0) {
-                    allResults.addAll(insertIndex, localResults)
-                } else {
-                    allResults.addAll(localResults)
+            if (searchApps) {
+                getAppSearchResults(apps, query).collect { appResults ->
+                    allResults.addAll(appResults)
+                    send(allResults.toList())
                 }
+            }
+            getLocalSearchResults(query, prefs).collect { localResults ->
+                allResults.addAll(localResults)
                 send(allResults.toList())
             }
-        }
-
-        launch {
             getSearchLinks(query).collect { otherResults ->
                 allResults.addAll(otherResults)
                 send(allResults.toList())
@@ -226,7 +212,7 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
 
             if (appResults.size == 1 && context.isDefaultLauncher()) {
                 val singleAppResult = appResults.firstOrNull()
-                val shortcuts = singleAppResult?.let { searchUtils.getShortcuts(it, context) }
+                val shortcuts = singleAppResult?.let { SearchUtils.getShortcuts(it, context) }
                 if (shortcuts != null) {
                     if (shortcuts.isNotEmpty()) {
                         searchTargets.add(searchTargetFactory.createHeaderTarget(SPACE))
@@ -307,9 +293,9 @@ class LawnchairLocalSearchAlgorithm(context: Context) : LawnchairSearchAlgorithm
         apps: MutableList<AppInfo>,
         query: String,
     ) = if (enableFuzzySearch) {
-        searchUtils.fuzzySearch(apps, query)
+        SearchUtils.fuzzySearch(apps, query, maxAppResultsCount, hiddenApps, hiddenAppsInSearch)
     } else {
-        searchUtils.normalSearch(apps, query)
+        SearchUtils.normalSearch(apps, query, maxAppResultsCount, hiddenApps, hiddenAppsInSearch)
     }
 
     private suspend fun performDeviceLocalSearch(query: String, prefs: PreferenceManager): MutableList<SearchResult> =
