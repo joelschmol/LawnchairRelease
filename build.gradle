@@ -123,7 +123,7 @@ final def buildCommit = providers.exec {
     commandLine('git', 'rev-parse', '--short=7', 'HEAD')
 }.standardOutput.asText.get().trim()
 
-final def versionString = "14.0.0"
+final def versionString = "15.0.0"
 final def versionDisplayName = "${versionString} (${buildCommit})"
 final def parts = versionString.split("\\.")
 final def majorVersion = parts[0]
