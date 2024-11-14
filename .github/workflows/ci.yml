@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
       - name: Generate release name with current date
-        run: echo "RELEASE_NAME=14.0.0-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "RELEASE_NAME=15.0.0-$(date +'%Y%m%d')" >> $GITHUB_ENV
       - name: Delete release if exist then create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
