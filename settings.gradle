@@ -13,7 +13,7 @@ pluginManagement {
 
 // https://docs.gradle.com/enterprise/gradle-plugin/
 plugins {
-    id "com.gradle.develocity" version "3.18.1"
+    id "com.gradle.develocity" version "3.18.2"
 }
 
 def isCI = providers.environmentVariable('CI').present
@@ -71,5 +71,10 @@ include ':compatLib:compatLibVR'
 include ':compatLib:compatLibVS'
 include ':compatLib:compatLibVT'
 include ':compatLib:compatLibVU'
+include ':compatLib:compatLibVV'
 
 include ':baseline-profile'
+
+include ':androidx-lib'
+include ':flags'
+include ':wmshell'
