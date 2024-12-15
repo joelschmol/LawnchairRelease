@@ -253,11 +253,11 @@ public class AppEventProducer implements StatsLogConsumer {
                 return createTempFolderTarget();
         }
         if (id != null && cn != null) {
-            if (shortcutInfo != null) {
-                return new AppTarget.Builder(new AppTargetId(id), shortcutInfo).build();
-            }
             if (!Utilities.ATLEAST_Q) {
                 return null;
+            }
+            if (shortcutInfo != null) {
+                return new AppTarget.Builder(new AppTargetId(id), shortcutInfo).build();
             }
             return new AppTarget.Builder(new AppTargetId(id), cn.getPackageName(), userHandle)
                     .setClassName(cn.getClassName())
@@ -268,9 +268,13 @@ public class AppEventProducer implements StatsLogConsumer {
 
 
     private AppTarget createTempFolderTarget() {
-        return new AppTarget.Builder(new AppTargetId("folder:" + SystemClock.uptimeMillis()),
+        try {
+            return new AppTarget.Builder(new AppTargetId("folder:" + SystemClock.uptimeMillis()),
                 mContext.getPackageName(), Process.myUserHandle())
                 .build();
+        } catch (NoClassDefFoundError e) {
+            return null;
+        }
     }
 
     private String getContainer(LauncherAtom.ItemInfo info) {

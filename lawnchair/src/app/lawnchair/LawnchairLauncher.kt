@@ -16,12 +16,14 @@
 
 package app.lawnchair
 
+import android.animation.AnimatorSet
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Pair
 import android.view.Display
 import android.view.View
 import android.view.ViewTreeObserver
@@ -59,6 +61,7 @@ import com.android.launcher3.statemanager.StateManager
 import com.android.launcher3.statemanager.StateManager.StateHandler
 import com.android.launcher3.uioverrides.QuickstepLauncher
 import com.android.launcher3.uioverrides.states.AllAppsState
+import com.android.launcher3.uioverrides.states.BackgroundAppState
 import com.android.launcher3.uioverrides.states.OverviewState
 import com.android.launcher3.util.ActivityOptionsWrapper
 import com.android.launcher3.util.Executors
@@ -107,6 +110,23 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
         override fun onStateTransitionComplete(finalState: LauncherState) {}
     }
+    private val statusBarClockListener = object : StateManager.StateListener<LauncherState> {
+        override fun onStateTransitionStart(toState: LauncherState) {
+            when (toState) {
+                is BackgroundAppState,
+                is OverviewState,
+                is AllAppsState,
+                -> {
+                    LawnchairApp.instance.restoreClockInStatusBar()
+                }
+                else -> {
+                    workspace.updateStatusbarClock()
+                }
+            }
+        }
+        override fun onStateTransitionComplete(finalState: LauncherState) {}
+    }
+
     private lateinit var colorScheme: ColorScheme
     private var hasBackGesture = false
 
@@ -155,6 +175,8 @@ class LawnchairLauncher : QuickstepLauncher() {
                 }
             }
         }.launchIn(scope = lifecycleScope)
+
+        launcher.stateManager.addStateListener(statusBarClockListener)
 
         preferenceManager2.rememberPosition.get().onEach {
             with(launcher.stateManager) {
@@ -229,6 +251,19 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
     }
 
+    override fun bindItems(items: List<ItemInfo>, forceAnimateIcons: Boolean) {
+        val inflatedItems = items.map { i ->
+            Pair.create(
+                i,
+                itemInflater?.inflateItem(
+                    i,
+                    modelWriter,
+                ),
+            )
+        }.toList()
+        bindInflatedItems(inflatedItems, if (forceAnimateIcons) AnimatorSet() else null)
+    }
+
     override fun handleGestureContract(intent: Intent?) {
         if (!LawnchairApp.isRecentsEnabled) {
             val gnc = GestureNavContract.fromIntent(intent)
@@ -276,7 +311,7 @@ class LawnchairLauncher : QuickstepLauncher() {
             ActivityOptions.makeBasic()
         }
         if (Utilities.ATLEAST_T) {
-            options.setSplashScreenStyle(splashScreenStyle)
+            options.splashScreenStyle = splashScreenStyle
         }
 
         Utilities.allowBGLaunch(options)
@@ -287,11 +322,11 @@ class LawnchairLauncher : QuickstepLauncher() {
         return runCatching {
             super.getActivityLaunchOptions(v, item)
         }.getOrElse {
-            getActivityLaunchOptionsDefault(v, item)
+            getActivityLaunchOptionsDefault(v)
         }
     }
 
-    private fun getActivityLaunchOptionsDefault(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
+    private fun getActivityLaunchOptionsDefault(v: View?): ActivityOptionsWrapper {
         var left = 0
         var top = 0
         var width = v!!.measuredWidth
@@ -302,7 +337,7 @@ class LawnchairLauncher : QuickstepLauncher() {
             if (icon != null) {
                 val bounds = icon.bounds
                 left = (width - bounds.width()) / 2
-                top = v.getPaddingTop()
+                top = v.paddingTop
                 width = bounds.width()
                 height = bounds.height()
             }
@@ -316,9 +351,7 @@ class LawnchairLauncher : QuickstepLauncher() {
                 height,
             ),
         )
-        options.setLaunchDisplayId(
-            if (v != null && v.display != null) v.display.displayId else Display.DEFAULT_DISPLAY,
-        )
+        options.launchDisplayId = if (v.display != null) v.display.displayId else Display.DEFAULT_DISPLAY
         val callback = RunnableList()
         return ActivityOptionsWrapper(options, callback)
     }

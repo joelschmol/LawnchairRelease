@@ -162,7 +162,7 @@ class LawnchairIconProvider @JvmOverloads constructor(
         var defaultIcon =
             super.getIconWithOverrides(packageName, component, user, iconDpi, fallback)
 
-        if (context.shouldTintIconPackBackgrounds() && defaultIcon is AdaptiveIconDrawable) {
+        if ((context.shouldTintIconPackBackgrounds() && defaultIcon is AdaptiveIconDrawable) || (context.isThemedIconsEnabled() && defaultIcon is AdaptiveIconDrawable)) {
             if (Utilities.ATLEAST_T && defaultIcon.monochrome != null) {
                 defaultIcon = defaultIcon.monochrome
                 return if (td != null) {
@@ -391,7 +391,10 @@ class LawnchairIconProvider @JvmOverloads constructor(
                 Log.e(TAG, "Unable to parse icon map.", e)
             }
         }
-
+        updateMapFromResources(
+            resources = context.resources,
+            packageName = context.packageName,
+        )
         if (context.packageManager.isPackageInstalled(packageName = themeMapName)) {
             iconPackVersion = context.packageManager.getPackageVersionCode(themeMapName)
             updateMapFromResources(

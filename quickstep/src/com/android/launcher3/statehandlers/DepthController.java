@@ -78,9 +78,8 @@ public class DepthController extends BaseDepthController implements StateHandler
                 setSurface(viewRootImpl != null ? viewRootImpl.getSurfaceControl() : null);
             }
         } catch (Throwable t) {
-
+            // Ignore any exceptions
         }
-
         view.post(() -> view.getViewTreeObserver().removeOnDrawListener(mOnDrawListener));
     }
 
@@ -90,11 +89,12 @@ public class DepthController extends BaseDepthController implements StateHandler
             mOnAttachListener = new View.OnAttachStateChangeListener() {
                 @Override
                 public void onViewAttachedToWindow(View view) {
-                    if (LawnchairQuickstepCompat.ATLEAST_S) {
+                    try {
                         CrossWindowBlurListeners.getInstance().addListener(mLauncher.getMainExecutor(),
                                 mCrossWindowBlurListener);
+                    } catch (Throwable t) {
+                        // Ignore
                     }
-
                     mLauncher.getScrimView().addOpaquenessListener(mOpaquenessListener);
 
                     // To handle the case where window token is invalid during last setDepth call.
@@ -114,8 +114,7 @@ public class DepthController extends BaseDepthController implements StateHandler
     }
 
     /**
-     * Cleans up after this controller so it can be garbage collected without
-     * leaving traces.
+     * Cleans up after this controller so it can be garbage collected without leaving traces.
      */
     public void dispose() {
         removeSecondaryListeners();
@@ -127,8 +126,12 @@ public class DepthController extends BaseDepthController implements StateHandler
     }
 
     private void removeSecondaryListeners() {
-        if (mCrossWindowBlurListener != null && LawnchairQuickstepCompat.ATLEAST_S) {
-            CrossWindowBlurListeners.getInstance().removeListener(mCrossWindowBlurListener);
+        if (mCrossWindowBlurListener != null) {
+            try {
+                CrossWindowBlurListeners.getInstance().removeListener(mCrossWindowBlurListener);
+            } catch (Throwable t) {
+                // Ignore
+            }
         }
         if (mOpaquenessListener != null) {
             mLauncher.getScrimView().removeOpaquenessListener(mOpaquenessListener);
@@ -161,7 +164,7 @@ public class DepthController extends BaseDepthController implements StateHandler
 
     @Override
     public void setStateWithAnimation(LauncherState toState, StateAnimationConfig config,
-            PendingAnimation animation) {
+                                      PendingAnimation animation) {
         if (config.hasAnimationFlag(SKIP_DEPTH_CONTROLLER)
                 || mIgnoreStateChangesDuringMultiWindowAnimation) {
             return;
@@ -173,7 +176,7 @@ public class DepthController extends BaseDepthController implements StateHandler
     }
 
     @Override
-    public void applyDepthAndBlur() {
+    protected void applyDepthAndBlur() {
         try {
             if (LawnchairQuickstepCompat.ATLEAST_R && mEnableDepth) {
                 ensureDependencies();
@@ -195,7 +198,7 @@ public class DepthController extends BaseDepthController implements StateHandler
         mIgnoreStateChangesDuringMultiWindowAnimation = true;
 
         ObjectAnimator mwAnimation = ObjectAnimator.ofFloat(stateDepth, MULTI_PROPERTY_VALUE,
-                mLauncher.getStateManager().getState().getDepth(mLauncher, isInMultiWindowMode))
+                        mLauncher.getStateManager().getState().getDepth(mLauncher, isInMultiWindowMode))
                 .setDuration(300);
         mwAnimation.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -219,5 +222,6 @@ public class DepthController extends BaseDepthController implements StateHandler
         writer.println(prefix + "\tmIgnoreStateChangesDuringMultiWindowAnimation="
                 + mIgnoreStateChangesDuringMultiWindowAnimation);
         writer.println(prefix + "\tmPauseBlurs=" + mPauseBlurs);
+        writer.println(prefix + "\tmWaitingOnSurfaceValidity=" + mWaitingOnSurfaceValidity);
     }
 }

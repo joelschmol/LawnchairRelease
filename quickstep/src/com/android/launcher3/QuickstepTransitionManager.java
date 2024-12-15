@@ -184,7 +184,7 @@ import app.lawnchair.compat.LawnchairQuickstepCompat;
 public class QuickstepTransitionManager implements OnDeviceProfileChangeListener {
 
     private static final boolean ENABLE_SHELL_STARTING_SURFACE =
-            SystemProperties.getBoolean("persist.debug.shell_starting_surface", true);
+            SystemProperties.getBoolean("persist.debug.shell_starting_surface", false);
 
     /** Duration of status bar animations. */
     public static final int STATUS_BAR_TRANSITION_DURATION = 120;
@@ -2203,8 +2203,12 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
     private static class LaunchDepthController extends DepthController {
         LaunchDepthController(QuickstepLauncher launcher) {
             super(launcher);
-            setCrossWindowBlursEnabled(
-                    CrossWindowBlurListeners.getInstance().isCrossWindowBlurEnabled());
+            try {
+                setCrossWindowBlursEnabled(
+                        CrossWindowBlurListeners.getInstance().isCrossWindowBlurEnabled());
+            } catch (Throwable t) {
+                // ignore
+            }
             // Make sure that the starting value matches the current depth set by the main
             // controller.
             stateDepth.setValue(launcher.getDepthController().stateDepth.getValue());
