@@ -234,8 +234,13 @@ class LawnchairLauncher : QuickstepLauncher() {
         out.add(SearchBarStateHandler(this))
     }
 
-    override fun getSupportedShortcuts(): Stream<SystemShortcut.Factory<*>> =
-        Stream.concat(super.getSupportedShortcuts(), Stream.of(LawnchairShortcut.UNINSTALL, LawnchairShortcut.CUSTOMIZE))
+    override fun getSupportedShortcuts(): Stream<SystemShortcut.Factory<*>> = Stream.concat(
+        super.getSupportedShortcuts(),
+        Stream.concat(
+            Stream.of(LawnchairShortcut.UNINSTALL, LawnchairShortcut.CUSTOMIZE),
+            if (LawnchairApp.isRecentsEnabled) Stream.of(LawnchairShortcut.PAUSE_APPS) else Stream.empty(),
+        ),
+    )
 
     override fun updateTheme() {
         if (themeProvider.colorScheme != colorScheme) {
@@ -327,12 +332,10 @@ class LawnchairLauncher : QuickstepLauncher() {
         return ActivityOptionsWrapper(options, callbacks)
     }
 
-    override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
-        return runCatching {
-            super.getActivityLaunchOptions(v, item)
-        }.getOrElse {
-            getActivityLaunchOptionsDefault(v)
-        }
+    override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper = runCatching {
+        super.getActivityLaunchOptions(v, item)
+    }.getOrElse {
+        getActivityLaunchOptionsDefault(v)
     }
 
     private fun getActivityLaunchOptionsDefault(v: View?): ActivityOptionsWrapper {
@@ -415,8 +418,7 @@ class LawnchairLauncher : QuickstepLauncher() {
      */
     private fun reloadIconsIfNeeded() {
         if (
-            preferenceManager2.alwaysReloadIcons.firstBlocking() &&
-            (prefs.iconPackPackage.get().isNotEmpty() || prefs.themedIconPackPackage.get().isNotEmpty())
+            preferenceManager2.alwaysReloadIcons.firstBlocking()
         ) {
             LauncherAppState.getInstance(this).reloadIcons()
         }
