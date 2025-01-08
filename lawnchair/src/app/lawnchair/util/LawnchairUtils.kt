@@ -45,6 +45,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.os.UserManagerCompat
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
+import app.lawnchair.theme.color.ColorOption
 import app.lawnchair.theme.color.tokens.ColorTokens
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
@@ -109,12 +110,10 @@ fun killLauncher() {
     exitProcess(0)
 }
 
-fun getPrefsIfUnlocked(context: Context): PreferenceManager? {
-    return if (UserManagerCompat.isUserUnlocked(context)) {
-        PreferenceManager.getInstance(context)
-    } else {
-        null
-    }
+fun getPrefsIfUnlocked(context: Context): PreferenceManager? = if (UserManagerCompat.isUserUnlocked(context)) {
+    PreferenceManager.getInstance(context)
+} else {
+    null
 }
 
 fun getWindowCornerRadius(context: Context): Float {
@@ -175,7 +174,13 @@ fun getFolderBackgroundAlpha(context: Context): Int {
 
 fun getAllAppsScrimColor(context: Context): Int {
     val opacity = PreferenceManager.getInstance(context).drawerOpacity.get()
-    val scrimColor = ColorTokens.AllAppsScrimColor.resolveColor(context)
+    val prefs2 = PreferenceManager2.getInstance(context)
+    var scrimColor = ColorTokens.AllAppsScrimColor.resolveColor(context)
+    val colorOptions: ColorOption = prefs2.appDrawerBackgroundColor.firstBlocking()
+    val color = colorOptions.colorPreferenceEntry.lightColor.invoke(context)
+    if (color != 0) {
+        scrimColor = color
+    }
     val alpha = (opacity * 255).roundToInt()
     return ColorUtils.setAlphaComponent(scrimColor, alpha)
 }
@@ -249,8 +254,7 @@ fun Size.scaleDownTo(maxSize: Int): Size {
 
 fun Context.isDefaultLauncher(): Boolean = getDefaultLauncherPackageName() == packageName
 
-fun Context.getDefaultLauncherPackageName(): String? =
-    runCatching { getDefaultResolveInfo()?.activityInfo?.packageName }.getOrNull()
+fun Context.getDefaultLauncherPackageName(): String? = runCatching { getDefaultResolveInfo()?.activityInfo?.packageName }.getOrNull()
 
 fun Context.getDefaultResolveInfo(): ResolveInfo? {
     val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
@@ -285,21 +289,19 @@ fun createRoundedBitmap(color: Int, cornerRadius: Float): Bitmap {
     return bitmap
 }
 
-fun getSignatureHash(context: Context, packageName: String): Long? {
-    return try {
-        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-        } else {
-            context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-        }
-
-        val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            packageInfo.signingInfo?.apkContentsSigners
-        } else {
-            packageInfo.signatures
-        }
-        signatures?.firstOrNull()?.hashCode()?.toLong()
-    } catch (_: PackageManager.NameNotFoundException) {
-        null
+fun getSignatureHash(context: Context, packageName: String): Long? = try {
+    val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+    } else {
+        context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
     }
+
+    val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        packageInfo.signingInfo?.apkContentsSigners
+    } else {
+        packageInfo.signatures
+    }
+    signatures?.firstOrNull()?.hashCode()?.toLong()
+} catch (_: PackageManager.NameNotFoundException) {
+    null
 }
