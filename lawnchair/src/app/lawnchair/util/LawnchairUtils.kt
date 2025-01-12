@@ -53,6 +53,7 @@ import com.android.launcher3.util.Executors.MAIN_EXECUTOR
 import com.android.launcher3.util.Themes
 import com.android.systemui.shared.system.QuickStepContract
 import com.patrykmichalik.opto.core.firstBlocking
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import kotlin.math.max
@@ -110,10 +111,12 @@ fun killLauncher() {
     exitProcess(0)
 }
 
-fun getPrefsIfUnlocked(context: Context): PreferenceManager? = if (UserManagerCompat.isUserUnlocked(context)) {
-    PreferenceManager.getInstance(context)
-} else {
-    null
+fun getPrefsIfUnlocked(context: Context): PreferenceManager? {
+    return if (UserManagerCompat.isUserUnlocked(context)) {
+        PreferenceManager.getInstance(context)
+    } else {
+        null
+    }
 }
 
 fun getWindowCornerRadius(context: Context): Float {
@@ -252,6 +255,12 @@ fun Size.scaleDownTo(maxSize: Int): Size {
     }
 }
 
+fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+    val stream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
+}
+
 fun Context.isDefaultLauncher(): Boolean = getDefaultLauncherPackageName() == packageName
 
 fun Context.getDefaultLauncherPackageName(): String? = runCatching { getDefaultResolveInfo()?.activityInfo?.packageName }.getOrNull()
@@ -289,19 +298,21 @@ fun createRoundedBitmap(color: Int, cornerRadius: Float): Bitmap {
     return bitmap
 }
 
-fun getSignatureHash(context: Context, packageName: String): Long? = try {
-    val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-    } else {
-        context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-    }
+fun getSignatureHash(context: Context, packageName: String): Long? {
+    return try {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+        } else {
+            context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+        }
 
-    val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        packageInfo.signingInfo?.apkContentsSigners
-    } else {
-        packageInfo.signatures
+        val signatures = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.signingInfo?.apkContentsSigners
+        } else {
+            packageInfo.signatures
+        }
+        signatures?.firstOrNull()?.hashCode()?.toLong()
+    } catch (_: PackageManager.NameNotFoundException) {
+        null
     }
-    signatures?.firstOrNull()?.hashCode()?.toLong()
-} catch (_: PackageManager.NameNotFoundException) {
-    null
 }

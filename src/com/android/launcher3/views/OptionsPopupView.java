@@ -56,6 +56,7 @@ import java.util.List;
 
 import app.lawnchair.preferences2.PreferenceManager2;
 import app.lawnchair.ui.popup.LauncherOptionsPopup;
+import app.lawnchair.wallpaper.service.WallpaperService;
 
 /**
  * Popup shown on long pressing an empty space in launcher
@@ -71,7 +72,7 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
     // An intent extra to indicate the launch source by launcher.
     private static final String EXTRA_WALLPAPER_LAUNCH_SOURCE = "com.android.wallpaper.LAUNCH_SOURCE";
 
-    private final ArrayMap<View, OptionItem> mItemMap = new ArrayMap<>();
+    public final ArrayMap<View, OptionItem> mItemMap = new ArrayMap<>();
     private RectF mTargetRect;
     private boolean mShouldAddArrow;
 
@@ -171,6 +172,7 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
         if (activityContext == null) {
             return null;
         }
+                 
         OptionsPopupView<T> popup = (OptionsPopupView<T>) activityContext.getLayoutInflater()
                 .inflate(R.layout.longpress_options_menu, activityContext.getDragLayer(), false);
         popup.mTargetRect = targetRect;
