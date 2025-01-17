@@ -21,6 +21,7 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
@@ -44,9 +45,12 @@ import app.lawnchair.preferences2.PreferenceManager2
 import app.lawnchair.root.RootHelperManager
 import app.lawnchair.root.RootNotAvailableException
 import app.lawnchair.theme.ThemeProvider
+import app.lawnchair.ui.popup.LauncherOptionsPopup
 import app.lawnchair.ui.popup.LawnchairShortcut
 import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.unsafeLazy
+import app.lawnchair.wallpaper.service.WallpaperDatabase
+import app.lawnchair.wallpaper.service.WallpaperService
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.BaseActivity
 import com.android.launcher3.BubbleTextView
@@ -57,6 +61,7 @@ import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.popup.SystemShortcut
+import com.android.launcher3.shortcuts.DeepShortcutView
 import com.android.launcher3.statemanager.StateManager
 import com.android.launcher3.statemanager.StateManager.StateHandler
 import com.android.launcher3.uioverrides.QuickstepLauncher
@@ -69,7 +74,10 @@ import com.android.launcher3.util.RunnableList
 import com.android.launcher3.util.SystemUiController.UI_STATE_BASE_WINDOW
 import com.android.launcher3.util.Themes
 import com.android.launcher3.util.TouchController
+import com.android.launcher3.views.ActivityContext
 import com.android.launcher3.views.FloatingSurfaceView
+import com.android.launcher3.views.OptionsPopupView
+import com.android.launcher3.views.OptionsPopupView.OptionItem
 import com.android.launcher3.widget.LauncherWidgetHolder
 import com.android.launcher3.widget.RoundedCornerEnforcement
 import com.android.systemui.plugins.shared.LauncherOverlayManager
@@ -214,6 +222,9 @@ class LawnchairLauncher : QuickstepLauncher() {
             hasBackGesture = handler !is GestureHandlerConfig.NoOp
         }
 
+        LauncherOptionsPopup.restoreMissingPopupOptions(launcher)
+        LauncherOptionsPopup.migrateLegacyPreferences(launcher)
+
         // Handle update from version 12 Alpha 4 to version 12 Alpha 5.
         if (
             prefs.themedIcons.get() &&
@@ -227,6 +238,8 @@ class LawnchairLauncher : QuickstepLauncher() {
         showQuickstepWarningIfNecessary()
 
         reloadIconsIfNeeded()
+
+        WallpaperDatabase.INSTANCE.get(this).checkpointSync()
     }
 
     override fun collectStateHandlers(out: MutableList<StateHandler<LauncherState>>) {
@@ -298,6 +311,52 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
     }
 
+    override fun showDefaultOptions(x: Float, y: Float) {
+        val showWallpaperCarousel = "+carousel" in preferenceManager2.launcherPopupOrder.firstBlocking()
+
+        if (showWallpaperCarousel) {
+            show<LawnchairLauncher>(
+                this,
+                getPopupTarget(x, y),
+                OptionsPopupView.getOptions(this),
+            )
+        } else {
+            super.showDefaultOptions(x, y)
+        }
+    }
+
+    private fun <T> show(
+        activityContext: ActivityContext?,
+        targetRect: RectF,
+        items: List<OptionItem>,
+        shouldAddArrow: Boolean = false,
+        width: Int = 0,
+    ): OptionsPopupView<T>? where T : Context?, T : ActivityContext? {
+        if (activityContext == null) return null
+
+        val isEmpty = WallpaperService.INSTANCE.get(this).getTopWallpapers().isEmpty()
+        val layout = if (isEmpty) R.layout.longpress_options_menu else R.layout.wallpaper_options_popup
+
+        val popup = activityContext.layoutInflater.inflate(layout, activityContext.dragLayer, false) as OptionsPopupView<T>
+        popup.setTargetRect(targetRect)
+        popup.setShouldAddArrow(shouldAddArrow)
+
+        for (item in items) {
+            val deepLayout = if (isEmpty) R.layout.system_shortcut else R.layout.wallpaper_options_popup_item
+
+            val view = popup.inflateAndAdd<DeepShortcutView>(deepLayout, popup)
+            if (width > 0) view.layoutParams.width = width
+            view.iconView.setBackgroundDrawable(item.icon)
+            view.bubbleText.text = item.label
+            view.setOnClickListener(popup)
+//            view.onLongClickListener = popup
+            popup.mItemMap[view] = item
+        }
+
+        popup.show()
+        return popup
+    }
+
     override fun createAppWidgetHolder(): LauncherWidgetHolder {
         val factory = LauncherWidgetHolder.HolderFactory.newFactory(this) as LawnchairWidgetHolder.LawnchairHolderFactory
         return factory.newInstance(
@@ -332,10 +391,12 @@ class LawnchairLauncher : QuickstepLauncher() {
         return ActivityOptionsWrapper(options, callbacks)
     }
 
-    override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper = runCatching {
-        super.getActivityLaunchOptions(v, item)
-    }.getOrElse {
-        getActivityLaunchOptionsDefault(v)
+    override fun getActivityLaunchOptions(v: View?, item: ItemInfo?): ActivityOptionsWrapper {
+        return runCatching {
+            super.getActivityLaunchOptions(v, item)
+        }.getOrElse {
+            getActivityLaunchOptionsDefault(v)
+        }
     }
 
     private fun getActivityLaunchOptionsDefault(v: View?): ActivityOptionsWrapper {
@@ -372,21 +433,23 @@ class LawnchairLauncher : QuickstepLauncher() {
         super.onResume()
         restartIfPending()
 
-        dragLayer.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
-            private var handled = false
+        dragLayer.viewTreeObserver.addOnDrawListener(
+            object : ViewTreeObserver.OnDrawListener {
+                private var handled = false
 
-            override fun onDraw() {
-                if (handled) {
-                    return
-                }
-                handled = true
+                override fun onDraw() {
+                    if (handled) {
+                        return
+                    }
+                    handled = true
 
-                dragLayer.post {
-                    dragLayer.viewTreeObserver.removeOnDrawListener(this)
+                    dragLayer.post {
+                        dragLayer.viewTreeObserver.removeOnDrawListener(this)
+                    }
+                    depthController
                 }
-                depthController
-            }
-        })
+            },
+        )
     }
 
     override fun onDestroy() {
