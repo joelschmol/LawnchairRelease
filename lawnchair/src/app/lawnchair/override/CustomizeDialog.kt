@@ -21,7 +21,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,10 +29,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.lawnchair.gestures.type.GestureType
+import app.lawnchair.launcher
+import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.asState
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.ui.preferences.PreferenceActivity
+import app.lawnchair.ui.preferences.components.AppGesturePreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
 import app.lawnchair.ui.preferences.components.layout.ClickableIcon
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
@@ -41,10 +44,10 @@ import app.lawnchair.ui.preferences.navigation.Routes
 import app.lawnchair.ui.util.addIfNotNull
 import app.lawnchair.util.navigationBarsOrDisplayCutoutPadding
 import com.android.launcher3.LauncherAppState
+import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.util.ComponentKey
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
-import kotlinx.coroutines.launch
 
 @Composable
 fun CustomizeDialog(
@@ -115,9 +118,9 @@ fun CustomizeAppDialog(
 ) {
     val prefs = preferenceManager()
     val preferenceManager2 = preferenceManager2()
-    val coroutineScope = rememberCoroutineScope()
     val showComponentNames by preferenceManager2.showComponentNames.asState()
     val hiddenApps by preferenceManager2.hiddenApps.asState()
+    val adapter = preferenceManager2.hiddenApps.getAdapter()
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }
 
@@ -164,11 +167,24 @@ fun CustomizeAppDialog(
                 onCheckedChange = { newValue ->
                     val newSet = hiddenApps.toMutableSet()
                     if (newValue) newSet.add(stringKey) else newSet.remove(stringKey)
-                    coroutineScope.launch {
-                        preferenceManager2.hiddenApps.set(value = newSet)
-                    }
+                    adapter.onChange(newSet)
                 },
             )
+        }
+
+        if (context.launcher.stateManager.state != LauncherState.ALL_APPS) {
+            PreferenceGroup(heading = stringResource(R.string.gestures_label)) {
+                listOf(
+                    GestureType.SWIPE_LEFT,
+                    GestureType.SWIPE_RIGHT,
+                ).map { gestureType ->
+                    AppGesturePreference(
+                        componentKey,
+                        gestureType,
+                        stringResource(id = gestureType.labelResId),
+                    )
+                }
+            }
         }
     }
 }

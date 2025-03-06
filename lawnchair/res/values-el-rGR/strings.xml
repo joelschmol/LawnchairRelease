@@ -37,11 +37,18 @@
     <string name="action_copy_link">Αντιγραφή συνδέσμου</string>
     <string name="action_copy">Αντιγραφή</string>
     <string name="action_paste">Επικόλληση</string>
+    <string name="action_done">Ολοκληρώθηκε</string>
+    <string name="select_all">Επιλογή όλων</string>
+    <string name="deselect_all">Αποεπιλογή όλων</string>
+    <string name="inverse_selection">Αντίστροφη επιλογή</string>
     <string name="loading">Φόρτωση…</string>
+    <string name="download_update">Λήψη ενημέρωσης</string>
+    <string name="install_update">Εγκατάσταση ενημέρωσης</string>
+    <string name="pro_updated">Είστε ενημερωμένοι!</string>
     <string name="managed_by_lawnchair">Διαχειριζόμενο από τον εκκινητή Lawnchair</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">Προτιμήσεις</string>
-    <string name="settings_button_text">Ρυθμίσεις εκκινητή</string>
+    <string name="settings_button_text">Ρυθμίσεις Αρχ. Οθ.</string>
     <string name="system_settings">Ρυθμίσεις συστήματος</string>
     <string name="title_change_settings">Αλλαγή ρυθμίσεων</string>
     <!--
@@ -49,6 +56,7 @@
     General "words" used throughout Lawnchair
 
     -->
+    <string name="others_category_label">Άλλα</string>
     <!-- Selection options -->
     <string name="dynamic">Δυναμικό</string>
     <string name="presets">Προεπιλογές</string>
@@ -64,6 +72,7 @@
     <string name="layout">Διάταξη</string>
     <!-- Generic styling options -->
     <string name="wallpaper">Ταπετσαρία</string>
+    <string name="style">Στυλ</string>
     <string name="background_opacity">Αδιαφάνεια φόντου</string>
     <!-- Toast text and tips -->
     <string name="copied_toast">Αντιγράφηκε στο πρόχειρο</string>
@@ -71,11 +80,28 @@
     <string name="item_removed">Το στοιχείο αφαιρέθηκε</string>
     <!-- Miscellaneous -->
     <string name="what_to_show">Τι να εμφανίζεται</string>
-    <string name="wallpapers">Ταπετσαρίες &amp; στιλ</string>
+    <string name="wallpapers">Ταπετσαρία και στιλ</string>
+    <string name="caddy_beta">Κατηγορίες (Beta)</string>
+    <string name="caddy">Κατηγορίες</string>
+    <string name="app_drawer_folder">Φάκελοι συρταριού εφαρμογών</string>
+    <string name="app_drawer_folder_settings">Δημιουργία, διαγραφή ή επεξεργασία φακέλων</string>
+    <string name="add_folder">Δημιουργία φακέλου</string>
+    <string name="edit_folder">Επεξεργασία φακέλου</string>
+    <string name="add_label">Προσθήκη</string>
+    <string name="edit_label">Επεξεργασία</string>
+    <string name="apply_label">Εφαρμογή</string>
+    <string name="delete_label">Διαγραφή</string>
+    <string name="folder_list_note">Σύρετε προς τα αριστερά για επεξεργασία, σύρετε προς τα δεξιά για διαγραφή ή πατήστε για ενημέρωση στοιχείων</string>
+    <string name="apps_in_folder_label">Απόκρυψη εφαρμογών φακέλων</string>
+    <string name="apps_in_folder_description">Οι εφαρμογές που έχουν εκχωρηθεί σε φακέλους εξαιρούνται από τις λίστες εφαρμογών</string>
+    <string name="folders_filter_duplicates">Εμφάνιση μόνο ιδιαίτερων εφαρμογών</string>
+    <string name="my_folder_label">Ο φάκελός μου</string>
     <!-- A11y description -->
-    <string name="accessibility_service_description">Για να κλειδώσετε το τηλέφωνό σας όταν εκτελείτε μια χειρονομία, όπως και για να ανοίξετε τα Πρόσφατα μέσω χειρονομίας, ο εκκινητής Lawnchair χρειάζεται δικαιώματα Προσβασιμότητας.\n\nΟ εκκινητής Lawnchair δεν παρακολουθεί καμία ενέργεια του χρήστη, αν και το δικαίωμα να το κάνει απαιτείται για όλες τις υπηρεσίες προσβασιμότητας. Ο εκκινητής Lawnchair απορρίπτει οποιοδήποτε συμβάν που αποστέλλεται από το σύστημα.\n\nΓια να κλειδώσει το τηλέφωνό σας ή να ανοίξει τις Πρόσφατες εφαρμογές, ο εκκινητής Lawnchair χρησιμοποιεί την υπηρεσία προσβασιμότητας `performanceGlobalAction`.</string>
+    <string name="accessibility_service_description">Για να εκτελέσετε ορισμένες ενέργειες (όπως το κλείδωμα του τηλεφώνου σας) όταν εκτελείτε μια χειρονομία, ο Lawnchair απαιτεί άδεια προσβασιμότητας.\n\nΟ εκίνητης Lawnchair δεν παρακολουθεί καμία ενέργεια χρήστη, αν και το δικαίωμα να το κάνει απαιτείται για όλες τις υπηρεσίες προσβασιμότητας. Ο Lawnchair απορρίπτει οποιοδήποτε συμβάν που αποστέλλεται από το σύστημα.\n\nΓια να κλειδώσει το τηλέφωνό σας ή να ανοίξει τις πρόσφατες εφαρμογές, ο Lawnchair χρησιμοποιεί την υπηρεσία προσβασιμότητας performanceGlobalAction.</string>
+    <string name="x_with_y_count">%1$s (%2$d)</string>
     <string name="x_by_y">%1$d × %2$d</string>
     <string name="x_and_y">%1$s &amp; %2$s</string>
+    <string name="advanced">Προχωρημένες ρυθμίσεις</string>
     <!--
 
     Preference Dashboard
@@ -113,6 +139,12 @@
     <string name="always_reload_icons_description">Αποφυγή χρήσης αποθηκευμένων εικονιδίων από πακέτα εικονιδίων</string>
     <string name="recents_lock_unlock">Κλείδωμα/ξεκλείδωμα</string>
     <string name="recents_lock_unlock_description">Αποτροπή κλεισίματος επιλεγμένης εφαρμογής κατά το πάτημα του \"Καθαρισμός όλων\"</string>
+    <!--Overlay-->
+    <string name="overlay_fade_in">Ξεθώριασμα προς τα μέσα</string>
+    <string name="overlay_suck_in">Ρούφηγμα προς τα μέσα</string>
+    <string name="app_closing_animation">Εφέ κίνησης κλεισίματος εφαρμογών</string>
+    <string name="overlay_label">Επικάλυψη</string>
+    <string name="overlay_none">Κανένα</string>
     <!--
 
     Notifications
@@ -186,8 +218,8 @@
     <string name="import_from_clipboard">Εισαγωγή από το πρόχειρο</string>
     <string name="icon_shape_clipboard_import_error">Το πρόχειρο δεν περιέχει ένα έγκυρο σχήμα εικονιδίων</string>
     <!-- Icon pack settings -->
-    <string name="icon_pack">Πακέτο εικονιδίων</string>
-    <string name="themed_icon_pack">Πηγή θεματοποιημένων εικονιδίων</string>
+    <string name="icon_pack">Πακέτα εικονιδίων</string>
+    <string name="themed_icon_pack">Πηγή εικονιδίων</string>
     <string name="themed_icon_pack_tint">Απόχρωση με χρώμα έμφασης</string>
     <string name="system_icons">Εικονίδια συστήματος</string>
     <string name="themed_icon_title">Θεματοποιημένα εικονίδια</string>
@@ -336,10 +368,12 @@
 
     -->
     <string name="gesture_double_tap">Διπλό πάτημα</string>
-    <string name="gesture_swipe_up">Σύρσιμο επάνω</string>
-    <string name="gesture_swipe_down">Σύρετε κάτω</string>
+    <string name="gesture_swipe_up">Σύρετε προς τα επάνω</string>
+    <string name="gesture_swipe_down">Σύρετε προς τα κάτω</string>
     <string name="gesture_home_tap">Κουμπί αρχικής οθόνης</string>
     <string name="gesture_back_tap">Κουμπί επιστροφής</string>
+    <string name="gesture_swipe_left">Σύρετε προς τα αριστερά</string>
+    <string name="gesture_swipe_right">Σύρετε προς τα δεξιά</string>
     <string name="gesture_handler_no_op">Καμία ενέργεια</string>
     <string name="gesture_handler_sleep">Αναστολή</string>
     <string name="gesture_handler_recents">Άνοιγμα πρόσφατων εφαρμογών</string>
@@ -349,6 +383,7 @@
     <string name="gesture_handler_open_app_drawer">Άνοιγμα συρταριού εφαρμογών</string>
     <string name="gesture_handler_open_app_search">Άνοιγμα αναζήτησης εφαρμογών</string>
     <string name="gesture_handler_open_search">Άνοιγμα αναζήτησης</string>
+    <string name="gesture_handler_open_assistant">Άνοιγμα βοηθού</string>
     <string name="pick_app_for_gesture">Επιλογή εφαρμογής</string>
     <string name="dt2s_admin_hint_title">Απαιτούνται δικαιώματα διαχειριστή</string>
     <string name="dt2s_admin_hint">Για να χρησιμοποιήσετε το διπλό πάτημα για ύπνο, ορίστε τον εκκινητή Lawnchair ως εφαρμογή διαχείρισης συσκευής. Πατήστε στο “Άνοιγμα ρυθμίσεων” και μετά πατήστε “Ενεργοποίηση αυτής της εφαρμογής ως διαχειριστή της συσκευής.”</string>
@@ -382,6 +417,9 @@
     <string name="wallpaper_blur">Θόλωμα ταπετσαρίας (πειραματικό)</string>
     <string name="wallpaper_background_blur">Ένταση θολώματος</string>
     <string name="wallpaper_background_blur_factor">Όριο παράγοντα</string>
+    <string name="home_lawn_deck_label">Ενιαία</string>
+    <string name="home_lawn_deck_label_beta">Ενιαία (Beta)</string>
+    <string name="home_lawn_deck_description">Αποκτήστε εύκολη πρόσβαση στις εφαρμογές σας με την Ενιαία διάταξη, την απόλυτη εμπειρία χωρίς συρτάρι εφαρμογών, σχεδιασμένη για απλότητα και απρόσκοπτη οργάνωση</string>
     <string name="auto_add_shortcuts_label">Προσθήκη νέων εφαρμογών στην αρχική οθόνη</string>
     <string name="minus_one_enable">Εμφάνιση ροής</string>
     <string name="minus_one_unavailable">Δεν υπάρχουν εγκατεστημένες εφαρμογές ροής</string>
@@ -392,9 +430,9 @@
     <string name="wallpaper_depth_effect_description">Μεγέθυνση και σμίκρυνση της ταπετσαρίας κατά τη μετάβαση μεταξύ περιοχών του εκκινητή</string>
     <string name="show_sys_ui_scrim">Σκιά κορυφής</string>
     <string name="home_screen_grid">Πλέγμα αρχικής οθόνης</string>
-    <string name="home_screen_lock">Κλείδωμα αρχικής οθόνης</string>
-    <string name="home_screen_unlock">Ξεκλείδωμα αρχικής οθόνης</string>
-    <string name="home_screen_locked">Η αρχική οθόνη είναι κλειδωμένη</string>
+    <string name="home_screen_lock">Κλείδωμα Αρχ. Οθ.</string>
+    <string name="home_screen_unlock">Ξεκλείδωμα Αρχ. Οθ.</string>
+    <string name="home_screen_locked">Η Αρχ. Οθ. είναι κλειδωμένη</string>
     <string name="home_screen_lock_description">Αποτροπή αλλαγών στη διάταξη της αρχικής οθόνης</string>
     <string name="show_dot_pagination_label">Εμφάνιση διαχωριστικών κουκκίδων επιφανειών εργασίας</string>
     <string name="show_dot_pagination_description">Χρήση κουκκίδων αντί γραμμών για εμφάνιση αριθμού σελίδας</string>
@@ -403,7 +441,7 @@
     <string name="popup_menu">Αναδυόμενο μενού</string>
     <string name="popup_menu_items">Στοιχεία αναδυόμενου μενού</string>
     <string name="edit_menu_items">Επεξεργασία στοιχείων αναδυόμενου μενού</string>
-    <string name="wallpaper_quick_picker">Wallpaper quick picker</string>
+    <string name="wallpaper_quick_picker">Καρουζέλ ταπετσαρίας</string>
     <string name="status_bar_label">Γραμμή κατάστασης</string>
     <string name="show_status_bar">Εμφάνιση γραμμής κατάστασης</string>
     <string name="dark_status_bar_label">Σκοτεινή γραμμή κατάστασης</string>

@@ -62,7 +62,7 @@
     <dimen name="page_indicator_dot_size_v2">6dp</dimen>
 
     <!-- Which QSB search provider to use by default -->
-    <string name="config_default_qsb_search_provider_id" translatable="false">startpage</string>
+    <string name="config_default_qsb_search_provider_id" translatable="false">google</string>
 
     <!-- Which icon shape to use by default -->
     <string name="config_default_icon_shape" translatable="false">system</string>
@@ -94,7 +94,17 @@
     <string name="config_default_hotseat_mode" translatable="false">lawnchair</string>
 
     <!-- which web search provider to use by default -->
-    <string name="config_default_web_suggestion_provider" translatable="false">startpage</string>
+    <string name="config_default_web_suggestion_provider" translatable="false">google</string>
+
+    <!-- which overlay to use by default -->
+    <string name="config_default_overlay" translatable="false">suck_in</string>
+
+
+    <!-- swipe gesture key -->
+    <string name="pref_key_swipe_up" translatable="false">pref_swipe_up</string>
+    <string name="pref_key_swipe_down" translatable="false">pref_swipe_down</string>
+    <string name="pref_key_swipe_right" translatable="false">pref_swipe_right</string>
+    <string name="pref_key_swipe_left" translatable="false">pref_swipe_left</string>
 
     <bool name="config_default_show_hotseat">true</bool>
     <bool name="config_default_always_reload_icons">true</bool>
@@ -127,7 +137,7 @@
     <bool name="config_default_show_icon_labels_in_drawer">true</bool>
     <bool name="config_default_enable_fuzzy_search">false</bool>
     <bool name="config_default_enable_smartspace">true</bool>
-    <bool name="config_default_enable_feed">true</bool>
+    <bool name="config_default_enable_feed">false</bool>
     <bool name="config_default_enable_icon_selection">false</bool>
     <bool name="config_default_show_component_names">false</bool>
     <bool name="config_default_smartspace_show_date">true</bool>
@@ -161,4 +171,6 @@
 
     <!-- The max scale for the wallpaper when it's zoomed in -->
     <item name="config_wallpaperMaxScale" format="float" type="dimen">1.10</item>
+
+    <attr name="isOldGrid" format="boolean" />
 </resources>

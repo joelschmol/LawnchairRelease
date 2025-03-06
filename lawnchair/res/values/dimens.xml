@@ -77,6 +77,8 @@
     <dimen name="enhanced_smartspace_icon_margin">6dp</dimen>
     <dimen name="enhanced_smartspace_icon_size">20dp</dimen>
     <dimen name="enhanced_smartspace_margin_start_launcher">0dp</dimen>
+    <dimen name="enhanced_smartspace_padding_start">16dp</dimen>
+    <dimen name="enhanced_smartspace_padding_end">16dp</dimen>
     <dimen name="enhanced_smartspace_padding_top">16dp</dimen>
     <dimen name="enhanced_smartspace_secondary_card_corner_radius">28dp</dimen>
     <dimen name="enhanced_smartspace_secondary_card_end_margin">1dp</dimen>
@@ -106,5 +108,9 @@
     <dimen name="search_row_preview_radius">18dp</dimen>
 
     <dimen name="wallpaper_carousel_height">120dp</dimen>
+
+    <dimen name="aspect_ratio_landscape">10</dimen>
+    <dimen name="aspect_ratio_portrait">1</dimen>
+    <dimen name="aspect_ratio_portrait_and_square">1.05</dimen>
 
 </resources>
