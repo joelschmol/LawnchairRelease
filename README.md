@@ -12,3 +12,9 @@ Build
 ```sh
 ./gradlew assembleLawnWithQuickstepRelease
 ```
+
+Bug Report
+========
+
+If you find any bugs, please report them
+to [the upstream issues](https://github.com/LawnchairLauncher/lawnchair/issues).
