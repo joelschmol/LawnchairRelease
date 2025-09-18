@@ -39,7 +39,7 @@ import app.lawnchair.icons.shape.IconShapeManager
 import app.lawnchair.preferences.PreferenceManager as LawnchairPreferenceManager
 import app.lawnchair.qsb.providers.QsbSearchProvider
 import app.lawnchair.search.algorithms.LawnchairSearchAlgorithm
-import app.lawnchair.search.algorithms.data.WebSearchProvider
+import app.lawnchair.search.algorithms.engine.provider.web.WebSearchProvider
 import app.lawnchair.smartspace.model.SmartspaceCalendar
 import app.lawnchair.smartspace.model.SmartspaceMode
 import app.lawnchair.smartspace.model.SmartspaceTimeFormat
@@ -505,12 +505,17 @@ class PreferenceManager2 private constructor(private val context: Context) :
 
     val webSuggestionProviderUrl = preference(
         key = stringPreferencesKey(name = "web_suggestion_provider_url"),
-        defaultValue = "https://google.com/search?q=%s",
+        defaultValue = "",
     )
 
     val webSuggestionProviderSuggestionsUrl = preference(
         key = stringPreferencesKey(name = "web_suggestions_provider_suggestions_url"),
-        defaultValue = "https://google.com/complete/search?client=chrome&q=%s",
+        defaultValue = "",
+    )
+
+    val webSuggestionProviderName = preference(
+        key = stringPreferencesKey(name = "web_suggestion_provider_name"),
+        defaultValue = context.resources.getString(R.string.custom),
     )
 
     val maxAppSearchResultCount = preference(
@@ -672,6 +677,11 @@ class PreferenceManager2 private constructor(private val context: Context) :
         key = booleanPreferencesKey(name = "enable_lawn_deck"),
         defaultValue = false,
         onSet = { reloadHelper.reloadIcons() },
+    )
+
+    val showDeckLayout = preference(
+        key = booleanPreferencesKey(name = "show_deck_layout"),
+        defaultValue = false,
     )
 
     val enableLabelInDock = preference(

@@ -45,7 +45,7 @@ import app.lawnchair.ui.preferences.components.AppGesturePreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
 import app.lawnchair.ui.preferences.components.layout.ClickableIcon
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
-import app.lawnchair.ui.preferences.navigation.Routes
+import app.lawnchair.ui.preferences.navigation.SelectIcon
 import app.lawnchair.ui.util.addIfNotNull
 import app.lawnchair.util.navigationBarsOrDisplayCutoutPadding
 import com.android.launcher3.LauncherAppState
@@ -145,28 +145,31 @@ fun CustomizeAppDialog(
     val hiddenApps by preferenceManager2.hiddenApps.asState()
     val adapter = preferenceManager2.hiddenApps.getAdapter()
     val context = LocalContext.current
-    var title by remember { mutableStateOf("") }
+    var title by remember {
+        mutableStateOf(prefs.customAppName[componentKey] ?: defaultTitle)
+    }
+    val launcherAppState = LauncherAppState.getInstance(context)
 
     val request = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
         onClose()
     }
 
-    Log.d("TEST", "${Routes.SELECT_ICON}/$componentKey")
+    val route = SelectIcon(componentKey.toString())
+
+    Log.d("TEST", route.toString())
 
     val openIconPicker = {
-        val destination = "${Routes.SELECT_ICON}/$componentKey/"
-        request.launch(PreferenceActivity.createIntent(context, destination))
+        request.launch(PreferenceActivity.createIntent(context, route))
     }
 
-    DisposableEffect(key1 = null) {
-        title = prefs.customAppName[componentKey] ?: defaultTitle
+    DisposableEffect(Unit) {
         onDispose {
             val previousTitle = prefs.customAppName[componentKey]
             val newTitle = if (title != defaultTitle) title else null
             if (newTitle != previousTitle) {
                 prefs.customAppName[componentKey] = newTitle
-                val model = LauncherAppState.getInstance(context).model
+                val model = launcherAppState.model
                 model.onAppIconChanged(componentKey.componentName.packageName, componentKey.user)
             }
         }

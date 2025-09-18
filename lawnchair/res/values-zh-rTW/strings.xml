@@ -42,9 +42,25 @@
     <string name="deselect_all">取消全選</string>
     <string name="inverse_selection">反向選取</string>
     <string name="loading">正在載入…</string>
+    <string name="dismiss">Dismiss</string>
     <string name="download_update">下載更新</string>
     <string name="install_update">安裝更新</string>
-    <string name="pro_updated">您已擁有最新版本！</string>
+    <string name="view_changes">View changes</string>
+    <string name="pro_updated">您的軟體為最新版本！</string>
+    <!-- Changes dialog strings -->
+    <string name="changes_dialog_title">Updates</string>
+    <string name="changes_dialog_error">Failed to load changes</string>
+    <string name="changes_dialog_no_changes">No changes found</string>
+    <string name="changes_dialog_build_format">Build #%1$d → #%2$d</string>
+    <string name="changes_dialog_commit_info">by %1$s • %2$s • %3$s</string>
+    <!-- Time ago strings -->
+    <string name="time_just_now">just now</string>
+    <string name="time_minutes_ago">%dm</string>
+    <string name="time_hours_ago">%dh</string>
+    <string name="time_days_ago">%dd</string>
+    <string name="time_weeks_ago">%dw</string>
+    <string name="time_months_ago">%dmo</string>
+    <string name="time_years_ago">%dy</string>
     <string name="managed_by_lawnchair">由 Lawnchair 管理</string>
     <!-- When mentioning settings UI -->
     <string name="smartspace_preferences">偏好設定</string>
@@ -71,6 +87,7 @@
     <string name="grid">網格</string>
     <string name="layout">版面</string>
     <!-- Generic styling options -->
+    <string name="show_wallpaper">Show wallpaper</string>
     <string name="wallpaper">桌布</string>
     <string name="style">樣式</string>
     <string name="background_opacity">背景不透明度</string>
@@ -81,8 +98,8 @@
     <!-- Miscellaneous -->
     <string name="what_to_show">要顯示什麼</string>
     <string name="wallpapers">桌布</string>
-    <string name="caddy_beta">Caddy (Beta)</string>
-    <string name="caddy">Caddy</string>
+    <string name="caddy_beta">罐裝 (測試版)</string>
+    <string name="caddy">罐裝</string>
     <string name="app_drawer_folder">應用程式抽屜資料夾</string>
     <string name="app_drawer_folder_settings">抽屜資料夾</string>
     <string name="add_folder">建立資料夾</string>
@@ -91,13 +108,13 @@
     <string name="edit_label">編輯</string>
     <string name="apply_label">套用</string>
     <string name="delete_label">刪除</string>
-    <string name="folder_list_note">向左滑動以編輯，向右滑動以刪除，或是輕觸以更新項目</string>
+    <string name="folder_list_note">向左滑動進行編輯，向右滑動進行刪除，或是輕觸以更新項目</string>
     <string name="apps_in_folder_label">隱藏應用程式資料夾</string>
     <string name="apps_in_folder_description">分配至資料夾的應用程式將會從抽屜中排除</string>
     <string name="folders_filter_duplicates">僅顯示單一應用程式</string>
     <string name="my_folder_label">我的資料夾</string>
     <!-- A11y description -->
-    <string name="accessibility_service_description">Lawnchair 需要存取無障礙服務，才能透過手勢執行特定動作 (例如鎖定您的裝置)。\n\n存取所有無障礙服務皆需要這項權限，但 Lawnchair 不會監視任何使用者操作，並會捨棄任何系統發送的事件。\n\nLawnchair 使用 performGlobalAction 無障礙服務以鎖定您的裝置或開啟最近使用畫面。</string>
+    <string name="accessibility_service_description">Lawnchair 需要存取無障礙服務，才能透過手勢執行特定動作 (例如鎖定您的裝置)。\n\n存取所有無障礙服務都需要這項權限，但 Lawnchair 不會監視任何使用者操作，並會捨棄任何系統發送的事件。\n\nLawnchair 使用 performGlobalAction (執行全域動作)無障礙服務以鎖定您的裝置或開啟最近使用畫面。</string>
     <string name="x_with_y_count">%1$s (%2$d)</string>
     <string name="x_by_y">%1$d × %2$d</string>
     <string name="x_and_y">%1$s &amp; %2$s</string>
@@ -109,7 +126,7 @@
     -->
     <string name="settings">設定</string>
     <string name="general_label">一般</string>
-    <string name="general_description">色彩、圖示包、通知圓點</string>
+    <string name="general_description">色彩、圖示套件、通知圓點</string>
     <string name="home_screen_label">主畫面</string>
     <string name="home_screen_description">來源、網格、圖示</string>
     <string name="dock_label">底欄</string>
@@ -121,7 +138,7 @@
     <string name="folders_label">資料夾</string>
     <string name="folders_description">行列數</string>
     <string name="gestures_label">手勢</string>
-    <string name="gestures_description">輕觸並滑動</string>
+    <string name="gestures_description">輕觸和滑動</string>
     <string name="quickstep_label">最近使用畫面</string>
     <string name="quickstep_description">清除全部按鈕、圓角大小</string>
     <string name="about_label">關於</string>
@@ -129,16 +146,18 @@
     <string name="debug_restart_launcher">Restart Lawnchair</string>
     <string name="experimental_features_label">實驗性功能</string>
     <!-- Experimental features -->
-    <string name="font_picker_label">自訂字型</string>
+    <string name="font_picker_label">自訂字體</string>
     <string name="font_picker_description">部分文字維持原樣</string>
     <string name="smartspace_calendar_label">自訂資訊一覽日曆</string>
     <string name="smartspace_calendar_description">允許顯示非公曆的日期</string>
     <string name="workspace_increase_max_grid_size_label">增加主畫面網格數量上限</string>
     <string name="workspace_increase_max_grid_size_description">提高主畫面網格最多 10 x 10 的限制至 20 x 20</string>
-    <string name="always_reload_icons_label">永遠重新載入圖示</string>
+    <string name="always_reload_icons_label">一律重新載入圖示</string>
     <string name="always_reload_icons_description">避免使用圖示套件中已快取的圖示</string>
     <string name="icon_swipe_gestures">滑動圖示手勢</string>
     <string name="icon_swipe_gestures_description">配置於圖示上向左/右滑動時的動作以取代移動主畫面</string>
+    <string name="show_deck_layout">平面模式</string>
+    <string name="show_deck_layout_description">顯示版面選項以隱藏應用程式抽屜並自動將項目加到主畫面</string>
     <string name="recents_lock_unlock">鎖定/解鎖</string>
     <string name="recents_lock_unlock_description">按下 \"全部清除\" 時略過已選取的應用程式</string>
     <!--Overlay-->
@@ -159,15 +178,13 @@
     <string name="notification_dots_text_color">通知數量顏色</string>
     <string name="notification_dots_color_contrast_warning_always">警告： 通知圓點與通知數量的顏色對比不夠明顯</string>
     <string name="notification_dots_color_contrast_warning_sometimes">警告： 通知圓點與通知數量的顏色對比在某些情況下可能不夠明顯</string>
-    <string name="missing_notification_access_label">需要通知存取權</string>
-    <string name="missing_notification_access_desc">要使用通知圓點，請為 <xliff:g id="name" example="My App">%1$s</xliff:g> 啟用通知</string>
     <!--
 
     Icons
 
     -->
     <!-- General strings -->
-    <string name="icon_style_label">圖示風格</string>
+    <string name="icon_style_label">圖示主題</string>
     <string name="icon_shape_label">圖示形狀</string>
     <string name="icon_sizes">圖示尺寸</string>
     <string name="show_labels">顯示名稱</string>
@@ -193,7 +210,7 @@
     <string name="icon_shape_system">系統</string>
     <string name="icon_shape_circle">圓形</string>
     <string name="icon_shape_cylinder">圓柱形</string>
-    <string name="icon_shape_diamond">鑽石型</string>
+    <string name="icon_shape_diamond">鑽石形</string>
     <string name="icon_shape_egg">蛋形</string>
     <string name="icon_shape_cupertino">iOS</string>
     <string name="icon_shape_octagon">八角形</string>
@@ -204,6 +221,10 @@
     <string name="icon_shape_square">方形</string>
     <string name="icon_shape_squircle">方圓形</string>
     <string name="icon_shape_teardrop">水滴形</string>
+    <!-- Icon shape (Material 3 Expressive) -->
+    <string name="icon_shape_four_sided_cookie">Four-sided cookie</string>
+    <string name="icon_shape_seven_sided_cookie">Seven-sided cookie</string>
+    <string name="icon_shape_arch">Arch</string>
     <!-- Custom icon shapes -->
     <string name="custom_icon_shape">自訂圖示形狀</string>
     <string name="custom_icon_shape_create">建立自訂圖示形狀</string>
@@ -220,7 +241,7 @@
     <string name="import_from_clipboard">從剪貼簿匯入</string>
     <string name="icon_shape_clipboard_import_error">剪貼簿不包含有效的圖示形狀</string>
     <!-- Icon pack settings -->
-    <string name="icon_pack">圖示包</string>
+    <string name="icon_pack">圖示套件</string>
     <string name="themed_icon_pack">主題圖示來源</string>
     <string name="themed_icon_pack_tint">用強調色進行著色</string>
     <string name="system_icons">系統圖示</string>
@@ -261,9 +282,9 @@
     <string name="theme_system_default">系統</string>
     <string name="theme_follow_wallpaper">跟隨桌布</string>
     <!-- Color style -->
-    <string name="color_style_label">顏色樣式</string>
+    <string name="color_style_label">色彩樣式</string>
     <string name="color_style_spritz">餐前酒</string>
-    <string name="color_style_tonal_spot">調和</string>
+    <string name="color_style_tonal_spot">協調</string>
     <string name="color_style_vibrant">鮮明</string>
     <string name="color_style_expressive">張力</string>
     <string name="color_style_rainbow">彩虹</string>
@@ -337,17 +358,23 @@
     About the app
 
     -->
-    <string name="news">新聞</string>
     <string name="support">支援</string>
+    <string name="translate">翻譯</string>
+    <string name="donate">捐贈</string>
     <string name="product">產品</string>
     <string name="design_and_development">開發與設計</string>
     <string name="development">開發</string>
     <string name="quickswitch_maintenance">QuickSwitch 維護</string>
     <string name="devops">DevOps</string>
     <string name="support_and_pr">支援與提取</string>
+    <string name="community">Community</string>
+    <string name="telegram">Telegram</string>
+    <string name="news">新聞</string>
+    <string name="legal">Legal</string>
     <string name="acknowledgements">銘謝</string>
-    <string name="translate">翻譯</string>
-    <string name="donate">捐贈</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="contributor_status_active">Active</string>
+    <string name="update_check_failed">Failed to check for updates</string>
     <!--
 
     Backup and restore
@@ -391,9 +418,9 @@
     <string name="dt2s_admin_hint">如要使用輕觸兩下休眠，請將 Lawnchair 設為裝置管理員應用程式。按下 \"開啟設定\" 然後選擇 \"啟用這個裝置管理員應用程式\"。</string>
     <string name="dt2s_admin_warning">將會停用輕觸兩下休眠。</string>
     <string name="d2ts_recents_a11y_hint_title">啟用無障礙服務</string>
-    <string name="dt2s_a11y_hint">如要使用輕觸兩下休眠，請啟用 Lawnchair 無障礙服務。按下 \"開啟設定\" 選擇 \"Lawnchair\"，再開啟 \"使用 Lawnchair\" 控制項。\n\nLawnchair 使用無障礙服務 performGlobalAction 執行這項動作。此為允許監控其他應用程式的敏感權限，然而 Lawnchair 並未配置與接收任何事件。</string>
+    <string name="dt2s_a11y_hint">如要使用輕觸兩下休眠，請啟用 Lawnchair 無障礙服務。按下 \"開啟設定\" 選擇 \"Lawnchair\"，再開啟 \"使用 Lawnchair\" 控制項。\n\nLawnchair 使用 performGlobalAction 無障礙服務執行這項動作。此為允許監控其他應用程式的敏感權限，然而 Lawnchair 並未配置與接收任何事件。</string>
     <string name="dt2s_recents_warning_open_settings">開啟設定</string>
-    <string name="recents_a11y_hint">如要開啟最近使用畫面，請啟用 Lawnchair 無障礙服務。按下 \"開啟設定\" 選擇 \"Lawnchair\"，再開啟 \"使用 Lawnchair\" 控制項。\n\nLawnchair 使用無障礙服務 performGlobalAction 執行這項動作。此為允許監控其他應用程式的敏感權限，然而 Lawnchair 並未配置與接收任何事件。</string>
+    <string name="recents_a11y_hint">如要開啟最近使用畫面，請啟用 Lawnchair 無障礙服務。按下 \"開啟設定\" 選擇 \"Lawnchair\"，再開啟 \"使用 Lawnchair\" 控制項。\n\nLawnchair 使用 performGlobalAction 無障礙服務執行這項動作。此為允許監控其他應用程式的敏感權限，然而 Lawnchair 並未配置與接收任何事件。</string>
     <!--
 
     Bug reporting
@@ -419,9 +446,9 @@
     <string name="wallpaper_blur">模糊桌布 (實驗性)</string>
     <string name="wallpaper_background_blur">模糊強度</string>
     <string name="wallpaper_background_blur_factor">係數閥值</string>
-    <string name="home_lawn_deck_label">牌面</string>
-    <string name="home_lawn_deck_label_beta">牌面 (測試版)</string>
-    <string name="home_lawn_deck_description">透過集卡冊輕鬆存取您的應用程式，旨在簡約設計與無縫管理的絕佳無抽屜體驗</string>
+    <string name="home_lawn_deck_label">平面</string>
+    <string name="home_lawn_deck_label_beta">平面 (測試版)</string>
+    <string name="home_lawn_deck_description">透過平面模式輕鬆存取您的應用程式，旨在簡約設計與無縫管理的絕佳無抽屜體驗</string>
     <string name="auto_add_shortcuts_label">新增新應用程式至主畫面</string>
     <string name="minus_one_enable">顯示訂閱</string>
     <string name="minus_one_unavailable">尚未安裝訂閱應用程式</string>
@@ -439,7 +466,7 @@
     <string name="show_dot_pagination_label">顯示圓點頁面指示器</string>
     <string name="show_dot_pagination_description">以小圓點取代線狀頁面指示器</string>
     <string name="show_material_u_popup_label">使用新的彈出樣式</string>
-    <string name="show_material_u_popup_description">使用 Material You 輕巧彈性的選單樣式</string>
+    <string name="show_material_u_popup_description">使用 Material You 輕彈的選單樣式</string>
     <string name="popup_menu">彈出選單</string>
     <string name="popup_menu_items">彈出選單項目</string>
     <string name="edit_menu_items">編輯彈出選單項目</string>
@@ -464,7 +491,7 @@
     <string name="search_bar_label">搜尋列</string>
     <string name="search_bar_settings">搜尋列設定</string>
     <string name="hotseat_mode_label">搜尋列小工具</string>
-    <string name="hotseat_mode_disabled">已停用</string>
+    <string name="hotseat_mode_disabled">關閉</string>
     <string name="hotseat_mode_google_search">Google 搜尋列</string>
     <string name="qsb_hotseat_background_transparency">背景透明度</string>
     <string name="qsb_hotseat_stroke_width">外框寬度</string>
@@ -502,10 +529,10 @@
     <string name="label_voice_search">語音搜尋</string>
     <!-- App drawer settings -->
     <string name="hidden_apps_label">隱藏的應用程式</string>
-    <string name="pref_all_apps_bulk_icon_loading_title">批次載入應用程式</string>
-    <string name="pref_all_apps_bulk_icon_loading_description">批次載入及呈現圖示並取代個別讀取方式</string>
+    <string name="pref_all_apps_bulk_icon_loading_title">大量讀取應用程式</string>
+    <string name="pref_all_apps_bulk_icon_loading_description">大量載入及呈現圖示取代各別讀取</string>
     <string name="pref_all_apps_remember_position_title">記憶位置</string>
-    <string name="pref_all_apps_remember_position_description">記住「所有應用程式」清單的最後捲動位置</string>
+    <string name="pref_all_apps_remember_position_description">記住應用程式抽屜的最後捲動位置</string>
     <string name="pref_all_apps_show_scrollbar_title">顯示捲軸</string>
     <string name="app_drawer_columns">應用程式抽屜列數</string>
     <string name="row_height_label">清單高度</string>
@@ -520,13 +547,13 @@
     <!-- Folder settings -->
     <string name="folder_preview_bg_opacity_label">圖示預覽背景透明度</string>
     <string name="folder_bg_opacity_label">資料夾背景透明度</string>
-    <string name="folder_preview_bg_color_label">圖示背景色彩</string>
+    <string name="folder_preview_bg_color_label">圖示背景顏色</string>
     <string name="max_folder_columns">最大資料夾列數</string>
     <string name="max_folder_rows">最大資料夾列數</string>
     <!-- Quickstep settings -->
     <string name="quickswitch_ignored_warning">Lawnchair 未設為最近使用畫面提供者時將會略過這些設定</string>
     <string name="quickstep_incompatible">系統整合不相容</string>
-    <string name="quickstep_incompatible_description">您的裝置已設定使用 %1$s 提供的手勢系統 (稱為 Quickstep)，但這個版本的 %1$s 與您的 Android 版本不相容。如要繼續使用您的裝置，請解除安裝 %1$s 更新或停用手勢系統提供者 %1$s。</string>
+    <string name="quickstep_incompatible_description">您的裝置已設定使用 %1$s 提供的手勢系統 (稱為 Quickstep)，但這個版本的 %1$s 與您的 Android 不相容。如要繼續使用您的裝置，請解除安裝 %1$s 更新或停用手勢系統提供者 %1$s。</string>
     <string name="translucent_background">半透明背景</string>
     <string name="translucent_background_alpha">背景不透明度</string>
     <string name="recents_actions_label">快速操作</string>
@@ -545,7 +572,7 @@
 
     -->
     <!-- Launcher strings used -->
-    <string name="all_apps_device_search_hint">搜尋</string>
+    <string name="all_apps_device_search_hint">Search apps, web, and more</string>
     <string name="all_apps_search_bar_hint">搜尋應用程式</string>
     <string name="all_apps_no_search_results">找不到與 \"<xliff:g example="Android" id="query">%1$s</xliff:g>\" 相符的應用程式</string>
     <string name="all_apps_search_result_suggestions">網路搜尋結果</string>
@@ -572,15 +599,17 @@
     <string name="hidden_apps_show_name_typed">僅限輸入完整名稱</string>
     <string name="allapps_web_suggestion_provider_label">網路建議提供者</string>
     <string name="allapps_use_web_suggestion_icon_label">在搜尋列中顯示網頁建議提供者圖示</string>
-    <string name="allapps_match_qsb_style_label">Match dock search bar actions</string>
+    <string name="allapps_match_qsb_style_label">同步底欄搜尋列動作</string>
     <string name="allapps_match_qsb_style_description">輕觸底欄搜尋列將會開啟抽屜和搜尋</string>
     <string name="app_search_algorithm">搜尋演算法</string>
     <string name="search_algorithm_app_search">應用程式搜尋</string>
     <string name="search_algorithm_global_search_on_device">全域搜尋 (僅裝置)</string>
     <string name="search_algorithm_global_search_via_asi">全域搜尋 (透過 ASI)</string>
-    <string name="custom_search_url">自訂搜尋引擎 URL</string>
-    <string name="custom_search_suggestions_url">自訂搜尋建議 URL</string>
+    <string name="custom_search_label">Search engine name</string>
+    <string name="custom_search_url">Search engine URL</string>
+    <string name="custom_search_suggestions_url">Dearch suggestions URL</string>
     <string name="custom_search_input_hint">&#37;s 將會由搜尋字詞取代</string>
+    <string name="custom_search_suggestions_hint">&#37;s will be replaced with the search query. Results must be in JSON OpenSearch format.</string>
     <!-- Labels of each search result types -->
     <string name="show_search_result_types">在搜尋結果中顯示</string>
     <string name="search_pref_result_apps_and_shortcuts_title">應用程式和捷徑</string>
@@ -589,10 +618,17 @@
     <string name="search_pref_result_tips_title">Pixel 使用提示</string>
     <string name="search_pref_result_settings_title">Android 設定</string>
     <string name="search_pref_result_files_title">檔案</string>
+    <string name="search_pref_result_visual_media_title">Photos and videos</string>
+    <string name="search_pref_result_audio_media_title">Audio files</string>
+    <string name="search_pref_result_all_files_title">All files</string>
     <string name="search_pref_result_web_title">網頁建議</string>
     <string name="search_pref_result_history_title">搜尋記錄</string>
     <string name="all_apps_search_result_calculator">計算</string>
+    <string name="search_empty_state_title">Start searching</string>
+    <string name="search_empty_state_no_history_subtitle">Find apps, contacts, and more. Your recent searches will appear here.</string>
+    <string name="search_empty_state_history_disabled_subtitle">Find apps, contacts, and more.</string>
     <!-- Description for each search result type -->
+    <string name="search_pref_files_search_on">Search on</string>
     <string name="search_pref_result_files_description">媒體、檔案、更多項目</string>
     <string name="search_pref_result_contacts_description">聯絡人與其他項目</string>
     <string name="search_pref_result_web_provider_description">透過 <xliff:g id="web_search_provider">%1$s</xliff:g></string>
@@ -604,8 +640,36 @@
     <string name="max_recent_result_count_title">最大搜尋記錄項目</string>
     <string name="max_suggestion_result_count_title">最大建議數量</string>
     <string name="max_web_suggestion_delay">最大網路建議延遲</string>
-    <!-- Permission warnings -->
-    <string name="warn_contact_permission_content">如要搜尋聯絡人，請授予 Lawnchair 存取聯絡人和電話權限</string>
-    <string name="warn_files_permission_content">如要搜尋您的檔案，請授予 Lawnchair 儲存空間權限</string>
+    <!-- Permission management -->
+    <string name="missing_notification_access_label">需要通知存取權</string>
+    <string name="missing_notification_access_desc">要使用通知圓點，請為 <xliff:g id="name" example="My App">%1$s</xliff:g> 啟用通知</string>
+    <string name="warn_contact_permission_title">Contacts permission needed</string>
+    <string name="warn_contact_permission_content">To search for contacts, grant contacts and phone permissions to <xliff:g id="name" example="My App">%1$s</xliff:g></string>
+    <string name="permissions_music_audio">Music and audio access needed</string>
+    <string name="permissions_music_audio_description">To search your music and other audio files, <xliff:g id="name" example="My App">%1$s</xliff:g> needs permission to access your media library.</string>
+    <!-- Photos and videos -->
+    <string name="permissions_photos_videos">Photos and videos access needed</string>
+    <string name="permissions_photos_videos_description">To search your photos and videos, <xliff:g id="name" example="My App">%1$s</xliff:g> needs permission to access your media library.</string>
+    <string name="permissions_photos_videos_full">Access your full media library?</string>
+    <string name="permissions_photos_videos_full_description">To search all your photos and videos, <xliff:g id="name" example="My App">%1$s</xliff:g> needs full access to your media library.</string>
+    <string name="permissions_photos_videos_grant_full">Grant full media permissions</string>
+    <string name="permissions_photos_videos_manage_selected">Manage selected items</string>
+    <!-- External storage -->
+    <string name="permissions_external_storage">External storage access needed</string>
+    <string name="permissions_external_storage_description">To search your files, <xliff:g id="name" example="My App">%1$s</xliff:g> needs permission to access your device\'s external storage.</string>
+    <string name="permissions_manage_storage">Manage storage access needed</string>
+    <string name="permissions_manage_storage_description">To display your files in search results, <xliff:g id="name" example="My App">%1$s</xliff:g> requires permission to manage all files on your device. This permission is used solely to list files and will not be used to read or change the content of your personal files.</string>
+    <string name="permission_desc_wallpaper_base">To display wallpaper previews and include them in backups, <xliff:g id="name" example="My App">%1$s</xliff:g> requires permission %2$s. This is due to system limitations for accessing wallpaper data.</string>
+    <string name="permission_desc_ending_read_all_files">to read all files on your device</string>
+    <string name="permission_desc_ending_manage_all_files">to manage all files on your device</string>
+    <string name="permission_desc_wallpaper_multiple">Multiple permissions needed</string>
+    <string name="permission_desc_wallpaper_multiple_desc">To display wallpaper previews and include them in backups, <xliff:g id="name" example="My App">%1$s</xliff:g> requires the following permissions. This is due to system limitations for accessing wallpaper data.</string>
+    <string name="permission_label_manage_all_files">Manage all files on device</string>
+    <string name="permission_label_read_photos_videos">Read photos and videos</string>
+    <string name="manage_storage_access_denied_title">Cannot enable manage storage access</string>
+    <string name="manage_storage_access_denied_description">Due to Play Store policy, <xliff:g id="name" example="My App">%1$s</xliff:g> cannot request full storage access here. To access all files, please download <xliff:g id="name" example="My App">%1$s</xliff:g> from GitHub. Alternatively, you can grant access to photos, videos, and audio files individually in settings.</string>
+    <string name="open_permission_settings">開啟設定</string>
     <string name="grant_requested_permissions">授予權限</string>
+    <string name="permissions_needed">Permissions needed</string>
+    <string name="grant_requested_permissions_tap">Tap to grant permissions</string>
 </resources>
