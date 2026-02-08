@@ -31,14 +31,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
       - uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew assembleLawnWithQuickstepRelease
       - uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/trunk' && github.event_name == 'push'
@@ -51,14 +51,14 @@ jobs:
   check-style:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
       - uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew spotlessCheck
 
   nightly-release:
@@ -68,12 +68,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v6
         with:
           name: Release APK
       - name: Generate release name with current date
-        run: echo "RELEASE_NAME=15.0.0-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "RELEASE_NAME=16.0.0-$(date +'%Y%m%d')" >> $GITHUB_ENV
       - name: Delete release if exist then create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

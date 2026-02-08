@@ -1,8 +1,9 @@
 plugins {
-    id 'com.android.library'
+    alias(libs.plugins.android.library)
 }
 
 android {
+    buildToolsVersion "36.1.0"
     namespace "app.lawnchair.compatlib"
 
     buildFeatures {

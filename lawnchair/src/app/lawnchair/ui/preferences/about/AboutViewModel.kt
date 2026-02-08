@@ -3,8 +3,11 @@ package app.lawnchair.ui.preferences.about
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import app.lawnchair.preferences.PreferenceManager
+import app.lawnchair.preferences2.PreferenceManager2
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
+import com.patrykmichalik.opto.core.firstBlocking
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +21,8 @@ class AboutViewModel(
 ) : AndroidViewModel(application) {
 
     private val api: GitHubService = gitHubApiRetrofit.create()
+    private val prefs: PreferenceManager = PreferenceManager.getInstance(application)
+    private val prefs2: PreferenceManager2 = PreferenceManager2.getInstance(application)
 
     private val nightlyBuildsRepository = NightlyBuildsRepository(
         applicationContext = application,
@@ -31,7 +36,11 @@ class AboutViewModel(
     init {
         _uiState.update {
             it.copy(
-                versionName = BuildConfig.VERSION_NAME,
+                versionName = if (prefs.hideVersionInfo.get()) {
+                    prefs.pseudonymVersion.get() + " (pseudonym)"
+                } else {
+                    BuildConfig.VERSION_NAME
+                },
                 commitHash = BuildConfig.COMMIT_HASH,
                 coreTeam = team,
                 supportAndPr = supportAndPr,
@@ -49,7 +58,10 @@ class AboutViewModel(
             _uiState.update { it.copy(coreTeam = updatedCoreTeam) }
         }
 
-        if (BuildConfig.APPLICATION_ID.contains("nightly")) {
+        // Check if the build variant is Nightly
+        // AND check if user has enabled auto updater (available to Nightly variant)
+        // OR check if user has overridden it in debug flags (available to All variant)
+        if (BuildConfig.APPLICATION_ID.contains("nightly") && prefs2.autoUpdaterNightly.firstBlocking()) {
             nightlyBuildsRepository.checkForUpdate()
             viewModelScope.launch {
                 nightlyBuildsRepository.updateState.collect { state ->
@@ -63,8 +75,12 @@ class AboutViewModel(
         nightlyBuildsRepository.downloadUpdate()
     }
 
-    fun installUpdate(file: File) {
-        nightlyBuildsRepository.installUpdate(file)
+    fun installUpdate(file: File, forceInstall: Boolean = false) {
+        nightlyBuildsRepository.installUpdate(file, forceInstall)
+    }
+
+    fun resetToDownloaded(file: File) {
+        nightlyBuildsRepository.resetToDownloaded(file)
     }
 
     private suspend fun fetchActiveContributors(): Set<String> {
@@ -96,7 +112,7 @@ class AboutViewModel(
                 socialUrl = "https://codebucket.de",
             ),
             TeamMember(
-                name = "Goooler",
+                name = "Zongle Wang",
                 role = Role.Development,
                 photoUrl = "https://avatars.githubusercontent.com/u/10363352",
                 socialUrl = "https://github.com/Goooler",
@@ -146,6 +162,12 @@ class AboutViewModel(
                 socialUrl = "https://x.com/skittles9823",
             ),
             TeamMember(
+                name = "Pun Butrach",
+                role = Role.Development,
+                photoUrl = "https://avatars.githubusercontent.com/u/93124920",
+                socialUrl = "https://github.com/validcube",
+            ),
+            TeamMember(
                 name = "SuperDragonXD",
                 role = Role.Development,
                 photoUrl = "https://avatars.githubusercontent.com/u/70206496",
@@ -183,7 +205,7 @@ class AboutViewModel(
                 url = "https://lawnchair.crowdin.com/lawnchair",
             ),
             Link(
-                iconResId = R.drawable.ic_donate,
+                iconResId = R.drawable.ic_open_collective,
                 labelResId = R.string.donate,
                 url = "https://opencollective.com/lawnchair",
             ),

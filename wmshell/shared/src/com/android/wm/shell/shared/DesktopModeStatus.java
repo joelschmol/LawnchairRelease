@@ -19,10 +19,11 @@ package com.android.wm.shell.shared;
 import android.annotation.NonNull;
 import android.content.Context;
 import android.os.SystemProperties;
+import android.os.Build;
 
 import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
-import com.android.window.flags.Flags;
+import com.android.window.flags2.Flags;
 
 /**
  * Constants for desktop mode feature
@@ -150,7 +151,8 @@ public class DesktopModeStatus {
      */
     @VisibleForTesting
     public static boolean isDesktopModeSupported(@NonNull Context context) {
-        return context.getResources().getBoolean(R.bool.config_isDesktopModeSupported);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+                && context.getResources().getBoolean(R.bool.config_isDesktopModeSupported);
     }
 
     /**

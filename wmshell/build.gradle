@@ -1,10 +1,10 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'com.google.devtools.ksp'
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.google.ksp)
 }
 
 android {
+    buildToolsVersion "36.1.0"
     namespace "com.android.wm.shell"
     buildFeatures {
         aidl true
@@ -12,19 +12,28 @@ android {
     sourceSets {
         main {
             java.srcDirs = ['shared/src']
+            kotlin.directories.add('shared/src')
             aidl.srcDirs = ['shared/src']
             manifest.srcFile 'AndroidManifest.xml'
-            res.srcDirs = ['shared']
+            res.srcDirs = ['shared', 'shared/res']
         }
     }
 }
 
-addFrameworkJar('framework-15.jar')
+addFrameworkJar('framework-16.jar')
 compileOnlyCommonJars()
 
 dependencies {
-    implementation "com.google.dagger:hilt-android:$daggerVersion"
-    ksp "com.google.dagger:hilt-compiler:$daggerVersion"
-    implementation 'androidx.core:core-animation:1.0.0'
-    implementation 'androidx.dynamicanimation:dynamicanimation:1.1.0'
+    implementation libs.dagger.hilt.android
+    ksp libs.dagger.hilt.compiler
+    implementation libs.androidx.core.animation
+    implementation libs.androidx.dynamicanimation
+    compileOnly projects.iconloaderlib
+    compileOnly projects.msdllib
+    compileOnly projects.flags
+    compileOnly projects.utils
+}
+
+ksp {
+    arg("dagger.hilt.disableModulesHaveInstallInCheck", "true")
 }
