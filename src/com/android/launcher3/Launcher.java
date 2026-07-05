@@ -252,6 +252,7 @@ import com.android.launcher3.util.WallpaperThemeManager;
 import com.android.launcher3.views.FloatingIconView;
 import com.android.launcher3.views.FloatingSurfaceView;
 import com.android.launcher3.views.OptionsPopupView;
+import app.lawnchair.views.EditModePageStrip;
 import com.android.launcher3.views.ScrimView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
@@ -364,6 +365,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     // UI and state for the overview panel
     private View mOverviewPanel;
+    private EditModePageStrip mEditModePageStrip;
 
     // Used to notify when an activity launch has been deferred because launcher is not yet resumed
     // TODO: See if we can remove this later
@@ -706,9 +708,14 @@ public class Launcher extends StatefulActivity<LauncherState>
         // When the flag oneGridSpecs is on we want to disable ALLOW_ROTATION which is replaced
         // by FIXED_LANDSCAPE_MODE, ALLOW_ROTATION will only be used on Tablets and foldables
         // afterwards.
-        if (getDeviceProfile().getDeviceProperties().isPhone()) {
-            LauncherPrefs.get(this).put(LauncherPrefs.ALLOW_ROTATION, false);
-        } else if (getDeviceProfile().getDeviceProperties().isTablet()) {
+//        if (getDeviceProfile().getDeviceProperties().isPhone()) {
+//            LauncherPrefs.get(this).put(LauncherPrefs.ALLOW_ROTATION, false);
+//        } else if (getDeviceProfile().getDeviceProperties().isTablet()) {
+        
+        // pE-TODO(oneGridSpec): Investigate!
+        //
+        // LC-Note: Don't rotation prefs to false on phones! See original code above
+        if (getDeviceProfile().getDeviceProperties().isTablet()) {
             // Tablet do not use fixed landscape mode, make sure it can't be activated by mistake
             LauncherPrefs.get(this).put(FIXED_LANDSCAPE_MODE, false);
         }
@@ -1302,6 +1309,28 @@ public class Launcher extends StatefulActivity<LauncherState>
         mDragLayer = findViewById(R.id.drag_layer);
         mFocusHandler = mDragLayer.getFocusIndicatorHelper();
         mWorkspace = mDragLayer.findViewById(R.id.workspace);
+        mEditModePageStrip = mDragLayer.findViewById(R.id.edit_mode_page_strip);
+        if (mEditModePageStrip != null) {
+            mStateManager.addStateListener(new StateManager.StateListener<LauncherState>() {
+                @Override
+                public void onStateTransitionStart(LauncherState toState) {
+                    if (toState == EDIT_MODE) {
+                        long duration = EDIT_MODE.getTransitionDuration(Launcher.this, true);
+                        mEditModePageStrip.showForEditMode(mWorkspace, duration);
+                    } else if (mStateManager.getCurrentStableState() == EDIT_MODE) {
+                        long duration = EDIT_MODE.getTransitionDuration(Launcher.this, false);
+                        mEditModePageStrip.hideForEditMode(duration);
+                    }
+                }
+
+                @Override
+                public void onStateTransitionComplete(LauncherState finalState) {
+                    if (finalState == EDIT_MODE) {
+                        mEditModePageStrip.maybeShowEducationTip(Launcher.this);
+                    }
+                }
+            });
+        }
         mWorkspace.initParentViews(mDragLayer);
         mOverviewPanel = findViewById(R.id.overview_panel);
         mHotseat = findViewById(R.id.hotseat);
@@ -1596,7 +1625,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                 }
 
                 if (shouldMoveToDefaultScreen && !mWorkspace.isHandlingTouch()) {
-                    if (mWorkspace.getNextPage() != Workspace.DEFAULT_PAGE) {
+                    if (mWorkspace.getNextPage() != mWorkspace.getDefaultPage()) {
                         mWorkspace.post(mWorkspace::moveToDefaultScreen);
                     } else {
                         handleHomeTap();
@@ -2115,7 +2144,7 @@ public class Launcher extends StatefulActivity<LauncherState>
             // state when we return to launcher.
             BubbleTextView btv = (BubbleTextView) v;
             btv.setStayPressed(true);
-            result.add(() -> btv.setStayPressed(false));
+            result.add(btv::clearPressedIconState);
         }
         return result;
     }

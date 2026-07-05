@@ -110,7 +110,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
+import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import app.lawnchair.LawnchairApp;
 import app.lawnchair.font.FontManager;
 import app.lawnchair.gestures.IconGestureListener;
@@ -254,6 +254,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     private final PreferenceManager2 pref2;
     private IconGestureListener mGestureListener;
+    private boolean mShouldHandleIconSwipeTouch; // Lawnchair: Icon swipe gesture feature
 
     public BubbleTextView(Context context) {
         this(context, null, 0);
@@ -368,13 +369,21 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             mIconLoadRequest.cancel();
             mIconLoadRequest = null;
         }
+        // Clear touch/press state and FastBitmapDrawable press/hover scale so recycled views
+        // (e.g. All Apps) do not keep inconsistent icon sizes (see issue #6575).
+        clearPressedBackground();
+        resetIconScale();
         // Reset any shifty arrangements in case animation is disrupted.
         setPivotY(0);
         setAlpha(1);
-        setScaleY(1);
+        setReorderBounceScale(1f);
         setTranslationY(0);
         setMaxLines(1);
         setVisibility(VISIBLE);
+
+        // Lawnchair: Icon swipe gesture feature
+        mGestureListener = null;
+        mShouldHandleIconSwipeTouch = false;
     }
 
     private void cancelDotScaleAnim() {
@@ -494,6 +503,10 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     protected void setItemInfo(ItemInfoWithIcon itemInfo) {
         setTag(itemInfo);
+        // Lawnchair: Icon swipe gesture feature
+        mGestureListener = shouldSupportIconSwipeGestures()
+                ? new IconGestureListener(getContext(), pref2, itemInfo.getComponentKey())
+                : null;
     }
 
     @VisibleForTesting
@@ -683,6 +696,10 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                 && shouldIgnoreTouchDown(event.getX(), event.getY())) {
             return false;
         }
+        // Lawnchair: Icon swipe gesture feature
+        if (handleIconSwipeTouchEvent(event)) {
+            return true;
+        }
         if (isLongClickable()) {
             super.onTouchEvent(event);
             mLongPressHelper.onTouchEvent(event);
@@ -707,6 +724,72 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                 || x > getWidth() - getPaddingRight();
     }
 
+    /** Lawnchair: Handle icon swipe gesture feature, self-explanatory. 
+     * Only do horizontal gesture at the moment
+     * @param event The type of MotionEvent to handle */
+    private boolean handleIconSwipeTouchEvent(MotionEvent event) {
+        if (!shouldSupportIconSwipeGestures()) {
+            return false;
+        }
+
+        int action = event.getActionMasked();
+        if (action == MotionEvent.ACTION_DOWN) {
+            mShouldHandleIconSwipeTouch = hasConfiguredIconSwipeGesture();
+        }
+
+        if (!mShouldHandleIconSwipeTouch || mGestureListener == null) {
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                mShouldHandleIconSwipeTouch = false;
+            }
+            return false;
+        }
+
+        boolean handled = mGestureListener.onTouchEvent(event);
+        if (handled) {
+            cancelLongPress();
+            MotionEvent cancelEvent = MotionEvent.obtain(event);
+            cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
+            super.onTouchEvent(cancelEvent);
+            mLongPressHelper.onTouchEvent(cancelEvent);
+            cancelEvent.recycle();
+            setPressed(false);
+            refreshDrawableState();
+            mShouldHandleIconSwipeTouch = false;
+            return true;
+        }
+
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            mShouldHandleIconSwipeTouch = false;
+        }
+        return false;
+    }
+
+    /** Lawnchair: Check eligibility for icon swipe gesture to be greenlit */
+    private boolean isIconSwipeGestureEnabledForCurrentState() {
+        return !(mActivity instanceof Launcher launcher 
+            && launcher.isInState(LauncherState.EDIT_MODE));
+    }
+
+    /** Lawnchair: Check if icon swipe feature is enabled, and has a gesture configured for it */
+    public boolean hasConfiguredIconSwipeGesture() {
+        return mGestureListener != null
+                && isIconSwipeGestureEnabledForCurrentState()
+                && mGestureListener.hasAnyGestureConfigured();
+    }
+
+    /** Lawnchair: Check if icon swipe feature is enabled, 
+     * and has a horizontal gesture configured for it */
+    public boolean hasConfiguredHorizontalIconSwipeGesture() {
+        return mGestureListener != null
+                && isIconSwipeGestureEnabledForCurrentState()
+                && mGestureListener.hasHorizontalGestureConfigured();
+    }
+
+    /** Lawnchair: Get supported swipe target which are within workspace or within folder */
+    private boolean shouldSupportIconSwipeGestures() {
+        return mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_FOLDER;
+    }
+
     void setStayPressed(boolean stayPressed) {
         mStayPressed = stayPressed;
         refreshDrawableState();
@@ -720,9 +803,28 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        // Resume callbacks can run before the window is focused again (e.g. back / predictive
+        // back). Clearing when focus returns covers that ordering gap.
+        if (hasWindowFocus) {
+            clearPressedIconState();
+        }
+    }
+
     public void clearPressedBackground() {
         setPressed(false);
         setStayPressed(false);
+    }
+
+    /**
+     * Clears framework pressed state, synthetic stay-pressed, and {@link FastBitmapDrawable} tap
+     * scale. Use when a launch transition ends so the icon matches neighbors again.
+     */
+    public void clearPressedIconState() {
+        clearPressedBackground();
+        resetIconScale();
     }
 
     @Override
@@ -1084,7 +1186,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         ItemInfo info = tag instanceof ItemInfo ? (ItemInfo) tag : null;
         return info == null || info.container != LauncherSettings.Favorites.CONTAINER_HOTSEAT
                 && info.container != LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION
-                || PreferenceExtensionsKt.firstBlocking(pref2.getEnableLabelInDock());
+                || PreferenceCacheExtensionsKt.firstCached(pref2.getEnableLabelInDock());
     }
 
     /**
@@ -1374,6 +1476,9 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         // same as before.
         mDisableRelayout = mIcon != null;
 
+        if (icon instanceof FastBitmapDrawable fbd) {
+            fbd.resetScale();
+        }
         icon.setBounds(0, 0, mIconSize, mIconSize);
 
         updateIcon(icon);

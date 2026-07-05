@@ -12,6 +12,7 @@ import app.lawnchair.search.adapter.SPACE_MINI
 import app.lawnchair.search.adapter.SearchTargetCompat
 import app.lawnchair.theme.color.tokens.ColorTokens
 import com.android.launcher3.R
+import com.android.systemui.shared.system.BlurUtils
 
 class SearchResultText(context: Context, attrs: AttributeSet?) :
     LinearLayout(context, attrs),
@@ -24,7 +25,11 @@ class SearchResultText(context: Context, attrs: AttributeSet?) :
         super.onFinishInflate()
         onFocusChangeListener = launcher.focusHandler
         title = ViewCompat.requireViewById(this, R.id.title)
-        title.setTextColor(ColorTokens.ColorAccent.resolveColor(context))
+        if (BlurUtils.supportsBlursOnWindows()) {
+            title.setTextColor(ColorTokens.TextColorPrimary.resolveColor(context))
+        } else {
+            title.setTextColor(ColorTokens.ColorAccent.resolveColor(context))
+        }
         FontManager.INSTANCE.get(context).setCustomFont(title, R.id.font_heading)
     }
 
@@ -34,12 +39,20 @@ class SearchResultText(context: Context, attrs: AttributeSet?) :
 
     override fun bind(target: SearchTargetCompat, shortcuts: List<SearchTargetCompat>) {
         title.text = target.searchAction?.title
-        val res = when (title.text) {
+        val titleText = title.text
+        val res = when (titleText) {
             SPACE -> resources.getDimensionPixelSize(R.dimen.space_layout_height)
             SPACE_MINI -> resources.getDimensionPixelSize(R.dimen.space_layout_mini_height)
             else -> resources.getDimensionPixelSize(R.dimen.search_result_text_height)
         }
-        val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, res)
-        this.layoutParams = layoutParams
+        if (titleText == SPACE || titleText == SPACE_MINI) {
+            val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, res)
+            this.layoutParams = layoutParams
+            minimumHeight = 0
+        } else {
+            val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+            this.layoutParams = layoutParams
+            minimumHeight = res
+        }
     }
 }

@@ -3,6 +3,7 @@ package app.lawnchair.allapps
 import android.content.Context
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import app.lawnchair.data.folder.model.FolderOrderUtils
@@ -11,6 +12,7 @@ import app.lawnchair.launcher
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
 import app.lawnchair.util.categorizeAppsWithSystemAndGoogle
+import app.lawnchair.util.observeOnce
 import com.android.launcher3.InvariantDeviceProfile.OnIDPChangeListener
 import com.android.launcher3.allapps.AllAppsStore
 import com.android.launcher3.allapps.AlphabeticalAppsList
@@ -31,7 +33,8 @@ class LawnchairAlphabeticalAppsList<T>(
     workProfileManager: WorkProfileManager?,
     privateProfileManager: PrivateProfileManager?,
 ) : AlphabeticalAppsList<T>(context, appsStore, workProfileManager, privateProfileManager),
-    OnIDPChangeListener
+    OnIDPChangeListener,
+    DefaultLifecycleObserver
     where T : Context, T : ActivityContext {
 
     private var hiddenApps: Set<String> = setOf()
@@ -48,6 +51,7 @@ class LawnchairAlphabeticalAppsList<T>(
 
     init {
         context.launcher.deviceProfile.inv.addOnChangeListener(this)
+        (context as? LifecycleOwner)?.lifecycle?.addObserver(this)
         try {
             prefs2.hiddenApps.onEach(launchIn = context.launcher.lifecycleScope) {
                 hiddenApps = it
@@ -59,8 +63,12 @@ class LawnchairAlphabeticalAppsList<T>(
         observeFolders()
     }
 
+    override fun onDestroy(owner: LifecycleOwner) {
+        context.launcher.deviceProfile.inv.removeOnChangeListener(this)
+    }
+
     private fun observeFolders() {
-        viewModel.foldersLiveData.observe(context as LifecycleOwner) { folders ->
+        viewModel.folders.observeOnce(context as LifecycleOwner) { folders ->
             folderList = folders
                 .sortedBy { folderOrder.indexOf(it.id) }
                 .toMutableList()

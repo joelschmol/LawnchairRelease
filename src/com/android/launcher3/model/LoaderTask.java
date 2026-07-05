@@ -16,6 +16,7 @@
 
 package com.android.launcher3.model;
 
+import static android.os.Process.myUserHandle;
 import static com.android.launcher3.BuildConfigs.WIDGET_ON_FIRST_SCREEN;
 import static com.android.launcher3.Flags.enableLauncherBrMetricsFixed;
 import static com.android.launcher3.LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE;
@@ -452,7 +453,7 @@ public class LoaderTask implements Runnable {
 
             final HashMap<PackageUserKey, SessionInfo> installingPkgs =
                     mSessionHelper.getActiveSessions();
-            if (Flags.enableSupportForArchiving()) {
+            if (Utilities.ATLEAST_V && Flags.enableSupportForArchiving()) {
                 mInstallingPkgsCached = installingPkgs;
             }
             installingPkgs.forEach(mIconCache::updateSessionCache);
@@ -616,9 +617,12 @@ public class LoaderTask implements Runnable {
             // Query for the set of apps
             final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, user);
             // Fail if we don't have any apps
-            // TODO: Fix this. Only fail for the current user.
             if (apps == null || apps.isEmpty()) {
-                return allActivityList;
+                if (myUserHandle().equals(user)) {
+                    return allActivityList;
+                } else {
+                    continue;
+                }
             }
             // Query UserManager directly for current quiet mode state to avoid stale cached values
             boolean quietMode = mUserManager.isQuietModeEnabled(user);
@@ -638,7 +642,7 @@ public class LoaderTask implements Runnable {
                 AppInfo appInfo = new AppInfo(app, mUserCache.getUserInfo(user),
                         ApiWrapper.INSTANCE.get(mContext), mPmHelper, quietMode);
                 try {
-                    if (Flags.enableSupportForArchiving()) {
+                    if (Utilities.ATLEAST_V && Flags.enableSupportForArchiving()) {
                         if (app.getApplicationInfo().isArchived) {
                             // For archived apps, include progress info in case there is a pending
                             // install session post restart of device.
@@ -730,7 +734,7 @@ public class LoaderTask implements Runnable {
             List<IconRequestInfo<WorkspaceItemInfo>> workspaceRequestInfos,
             boolean isRestoreFromBackup
     ) {
-        if (Flags.restoreArchivedAppIconsFromDb() && isRestoreFromBackup) {
+        if (Utilities.ATLEAST_V && Flags.restoreArchivedAppIconsFromDb() && isRestoreFromBackup) {
             Optional<IconRequestInfo<WorkspaceItemInfo>> workspaceIconRequest =
                     workspaceRequestInfos.stream()
                             .filter(request -> appInfo.getTargetComponent().equals(

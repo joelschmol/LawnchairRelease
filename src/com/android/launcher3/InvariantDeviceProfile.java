@@ -347,7 +347,16 @@ public class InvariantDeviceProfile {
         this.mThemeManager = ThemeManager.INSTANCE.get(context.getApplicationContext());
         this.mDisplayController = DisplayController.INSTANCE.get(context.getApplicationContext());
         String gridName = DeviceProfileOverrides.INSTANCE.get(context).getGridName(dbGridInfo);
-        initGrid(context, gridName);
+        initGrid(context, gridName, dbGridInfo, null);
+    }
+
+    public InvariantDeviceProfile(Context context, DeviceProfileOverrides.DBGridInfo dbGridInfo,
+            DeviceProfileOverrides.PreviewOverrides previewOverrides) {
+        this.mPrefs = LauncherPrefs.get(context.getApplicationContext());
+        this.mThemeManager = ThemeManager.INSTANCE.get(context.getApplicationContext());
+        this.mDisplayController = DisplayController.INSTANCE.get(context.getApplicationContext());
+        String gridName = DeviceProfileOverrides.INSTANCE.get(context).getGridName(dbGridInfo);
+        initGrid(context, gridName, dbGridInfo, previewOverrides);
     }
 
     private String initGrid(Context context, String gridName) {
@@ -376,12 +385,43 @@ public class InvariantDeviceProfile {
         }
         DeviceProfileOverrides.DBGridInfo dbGridInfo = DeviceProfileOverrides.INSTANCE.get(context)
             .getGridInfo();
-        initGrid(context, displayInfo, displayOption, dbGridInfo);
+        initGrid(context, displayInfo, displayOption, dbGridInfo, null);
         FileLog.d(TAG, "After initGrid:"
                 + "gridName:" + gridName
                 + ", dbFile:" + dbFile
                 + ", LauncherPrefs GRID_NAME:" + mPrefs.get(GRID_NAME)
                 + ", LauncherPrefs DB_FILE:" + mPrefs.get(DB_FILE));
+        return displayOption.grid.name;
+    }
+
+    private String initGrid(Context context, String gridName, DeviceProfileOverrides.DBGridInfo dbGridInfo) {
+        return initGrid(context, gridName, dbGridInfo, null);
+    }
+
+    private String initGrid(Context context, String gridName, DeviceProfileOverrides.DBGridInfo dbGridInfo,
+            DeviceProfileOverrides.PreviewOverrides previewOverrides) {
+        Info displayInfo = mDisplayController.getInfo();
+        List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
+                context,
+                gridName,
+                displayInfo,
+                (RestoreDbTask.isPending(mPrefs) && !Flags.oneGridSpecs()),
+                mPrefs.get(FIXED_LANDSCAPE_MODE)
+        );
+
+        List<DisplayOption> allOptionsFilteredByColCount =
+                filterByColumnCount(allOptions, dbGridInfo.getNumColumns());
+
+        DisplayOption displayOption =
+                invDistWeightedInterpolate(displayInfo, allOptionsFilteredByColCount.isEmpty()
+                                ? new ArrayList<>(allOptions)
+                                : new ArrayList<>(allOptionsFilteredByColCount),
+                        displayInfo.getDeviceType());
+
+        if (!displayOption.grid.name.equals(gridName)) {
+            mPrefs.put(GRID_NAME, displayOption.grid.name);
+        }
+        initGrid(context, displayInfo, displayOption, dbGridInfo, previewOverrides);
         return displayOption.grid.name;
     }
 
@@ -401,7 +441,9 @@ public class InvariantDeviceProfile {
         initGrid(context, getCurrentGridName(context));
     }
 
-    private void initGrid(Context context, Info displayInfo, DisplayOption displayOption, DeviceProfileOverrides.DBGridInfo dbGridInfo) {
+    private void initGrid(Context context, Info displayInfo, DisplayOption displayOption,
+            DeviceProfileOverrides.DBGridInfo dbGridInfo,
+            DeviceProfileOverrides.PreviewOverrides previewOverrides) {
         this.closestProfile = displayOption.grid;
         
         enableTwoLinesInAllApps = Flags.enableTwolineToggle()
@@ -409,13 +451,15 @@ public class InvariantDeviceProfile {
                 && mPrefs.get(ENABLE_TWOLINE_ALLAPPS_TOGGLE);
         mLocale = context.getResources().getConfiguration().locale.toString();
 
-        DeviceProfileOverrides.Options overrideOptions = DeviceProfileOverrides.INSTANCE.get(context)
-            .getOverrides(displayOption.grid);
+         DeviceProfileOverrides.Options overrideOptions = DeviceProfileOverrides.INSTANCE.get(context)
+                 .getOverrides(displayOption.grid, displayInfo.getDeviceType(), previewOverrides);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         GridOption closestProfile = displayOption.grid;
         numRows = dbGridInfo.getNumRows();
         numColumns = dbGridInfo.getNumColumns();
-        numSearchContainerColumns = closestProfile.numSearchContainerColumns;
+        numSearchContainerColumns = deviceType == TYPE_MULTI_DISPLAY
+                ? closestProfile.numSearchContainerColumns
+                : dbGridInfo.getNumHotseatColumns();
         dbFile = dbGridInfo.getDbFile();
         gridType = closestProfile.gridType;
         defaultLayoutId = closestProfile.defaultLayoutId;
@@ -451,19 +495,6 @@ public class InvariantDeviceProfile {
 
         iconSize = displayOption.iconSizes;
         allAppsIconSize = displayOption.allAppsIconSizes;
-        float maxIconSize = iconSize[0];
-        for (int i = 1; i < iconSize.length; i++) {
-            maxIconSize = Math.max(maxIconSize, iconSize[i]);
-        }
-        float maxAllAppsIconSize = allAppsIconSize[0];
-        for (int i = 1; i < allAppsIconSize.length; i++) {
-            maxAllAppsIconSize = Math.max(maxAllAppsIconSize, allAppsIconSize[i]);
-        }
-                // Calculate separate bitmap sizes for workspace and all apps
-                iconBitmapSize = ResourceUtils.pxFromDp(maxIconSize, metrics);
-                allAppsIconBitmapSize = ResourceUtils.pxFromDp(maxAllAppsIconSize, metrics);
-                // Use the larger of the two for fillResIconDpi to ensure we have adequate resources
-                fillResIconDpi = getLauncherIconDensity(Math.max(iconBitmapSize, allAppsIconBitmapSize));
 
         iconTextSize = displayOption.textSizes;
 
@@ -474,7 +505,7 @@ public class InvariantDeviceProfile {
         horizontalMargin = displayOption.horizontalMargin;
 
                 numShownHotseatIcons = deviceType == TYPE_MULTI_DISPLAY 
-                        ? closestProfile.numDatabaseHotseatIcons : dbGridInfo.getNumHotseatColumns();
+                        ? closestProfile.numHotseatIcons : dbGridInfo.getNumHotseatColumns();
         numDatabaseHotseatIcons = deviceType == TYPE_MULTI_DISPLAY
                         ? closestProfile.numDatabaseHotseatIcons : numShownHotseatIcons;
         hotseatBarBottomSpace = displayOption.hotseatBarBottomSpace;
@@ -507,6 +538,18 @@ public class InvariantDeviceProfile {
 
         // Lawnchair ignores partner overrides and allows the user to customize the grid themselves
         overrideOptions.applyUi(this);
+
+        float maxIconSize = iconSize[0];
+        for (int i = 1; i < iconSize.length; i++) {
+            maxIconSize = Math.max(maxIconSize, iconSize[i]);
+        }
+        float maxAllAppsIconSize = allAppsIconSize[0];
+        for (int i = 1; i < allAppsIconSize.length; i++) {
+            maxAllAppsIconSize = Math.max(maxAllAppsIconSize, allAppsIconSize[i]);
+        }
+        iconBitmapSize = ResourceUtils.pxFromDp(maxIconSize, metrics);
+        allAppsIconBitmapSize = ResourceUtils.pxFromDp(maxAllAppsIconSize, metrics);
+        fillResIconDpi = getLauncherIconDensity(Math.max(iconBitmapSize, allAppsIconBitmapSize));
 
         final List<DeviceProfile> localSupportedProfiles = new ArrayList<>();
         defaultWallpaperSize = new Point(displayInfo.currentSize);
@@ -575,9 +618,7 @@ public class InvariantDeviceProfile {
     @VisibleForTesting
     public void setCurrentGrid(Context context, String newGridName) {
         if (TextUtils.equals(mPrefs.get(GRID_NAME), newGridName)) return;
-        // pE-TODO(QPR1): Move off setCurrentGrid to Prefs?
-        // Lawnchair-TODO: Move off setCurrentGrid to Prefs?
-        //mPrefs.put(GRID_NAME, newGridName);
+        mPrefs.put(GRID_NAME, newGridName);
         DeviceProfileOverrides.INSTANCE.get(context).setCurrentGrid(newGridName);
         MAIN_EXECUTOR.execute(() -> {
             onConfigChanged(context.getApplicationContext());
@@ -596,7 +637,7 @@ public class InvariantDeviceProfile {
         Object[] oldState = toModelState();
 
         // Re-init grid
-        initGrid(context, mPrefs.get(GRID_NAME));
+        initGrid(context, getCurrentGridName(context));
 
         boolean modelPropsChanged = !Arrays.equals(oldState, toModelState());
         for (OnIDPChangeListener listener : mChangeListeners) {

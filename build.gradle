@@ -22,15 +22,13 @@ plugins {
 allprojects {
     plugins.withType(AndroidBasePlugin).configureEach {
         android {
-            buildToolsVersion "36.1.0"
+            buildToolsVersion "37.0.0"
             compileSdk {
-                version = release(36) {
-                    minorApiLevel = 1
-                }
+                version = release(37)
             }
             defaultConfig {
                 minSdk = 26
-                targetSdk = 36
+                targetSdk = 37
                 vectorDrawables.useSupportLibrary = true
             }
             lint {
@@ -156,12 +154,6 @@ android {
         buildConfigField "int", "QUICKSTEP_MAX_SDK", quickstepMaxSdk
     }
 
-    applicationVariants.configureEach { variant ->
-        variant.outputs.configureEach {
-            outputFileName = "Lawnchair-${versionString}-${buildTime}-${buildCommit}.apk"
-        }
-    }
-
     androidResources {
         generateLocaleConfig true
     }
@@ -192,10 +184,13 @@ android {
     ]
 
     // Load all proguard configs from AOSP
-    def proguardFilesFromAosp = allprojects
-        .collect { it.file("proguard.flags") }
-        .findAll { it.exists() }
-        .toArray()
+    def proguardFilesFromAosp = allprojects.collect { proj ->
+        [
+            'proguard.flags',
+            'proguard_flags.flags',
+            'proguard_plugins.flags'
+        ].collect { proj.file(it) }
+    }.flatten().findAll { it.exists() }.toArray()
 
     def releaseSigning
     try {
@@ -213,9 +208,9 @@ android {
 
     buildTypes {
         all {
+            signingConfig releaseSigning
             pseudoLocalesEnabled true
             resValue("string", "derived_app_name", "Lawnchair")
-            signingConfig releaseSigning
         }
 
         release {
@@ -291,6 +286,14 @@ android {
             java.srcDirs = ['quickstep/src', 'quickstep/dagger', 'quickstep/recents_ui_overrides/src', 'quickstep/src_protolog']
             kotlin.directories.addAll('quickstep/src', 'quickstep/dagger', 'quickstep/recents_ui_overrides/src', 'quickstep/src_protolog')
             manifest.srcFile "quickstep/AndroidManifest.xml"
+        }
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set("Lawnchair-${versionString}-${buildTime}-${buildCommit}.apk")
         }
     }
 }
@@ -427,7 +430,10 @@ dependencies {
 
     implementation libs.google.guava
 
+    implementation libs.androidx.exifinterface
+
     debugImplementation libs.leakcanary.android
+    debugImplementation libs.leakcanary.androidstudio
 }
 
 ksp {
@@ -438,7 +444,8 @@ ksp {
 
 spotless {
     java {
-        target("compatLib/**/src/**/*.java")
+        // LC-Note: Don't spotless AOSP code in compatlib
+        // target("compatLib/**/src/**/*.java")
         googleJavaFormat().aosp()
         removeUnusedImports()
     }
@@ -450,6 +457,7 @@ spotless {
             "ktlint_compose_compositionlocal-allowlist": "disabled",
             "ktlint_compose_lambda-param-event-trailing": "disabled",
             "ktlint_compose_content-slot-reused": "disabled",
+            "ktlint_compose_state-param-check": "disabled",
         ])
     }
 }

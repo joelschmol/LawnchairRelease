@@ -66,6 +66,9 @@ import com.android.launcher3.views.ScrimView;
 
 import com.google.android.msdl.data.model.MSDLToken;
 
+import app.lawnchair.preferences2.PreferenceManager2;
+import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
+
 /**
  * Handles AllApps view transition.
  * 1) Slides all apps view using direct manipulation
@@ -401,15 +404,22 @@ public class AllAppsTransitionController
         setAlphas(toState, config, builder);
         // This controls both haptics for tapping on QSB and going to all apps.
         if (ALL_APPS.equals(toState) && mLauncher.isInState(NORMAL)) {
-            if (Flags.msdlFeedback()) {
-                if (config.isUserControlled()) {
-                    mMSDLPlayerWrapper.playToken(MSDLToken.SWIPE_THRESHOLD_INDICATOR);
+            PreferenceManager2 prefs = PreferenceManager2.getInstance(mLauncher);
+            boolean hapticEnabled = PreferenceCacheExtensionsKt.firstCached(
+                    prefs.getAppDrawerHapticFeedback(), prefs);
+
+            if (hapticEnabled) {
+                if (Flags.msdlFeedback()) {
+                    if (config.isUserControlled()) {
+                        mMSDLPlayerWrapper.playToken(MSDLToken.SWIPE_THRESHOLD_INDICATOR);
+                    } else {
+                        mMSDLPlayerWrapper.playToken(MSDLToken.TAP_HIGH_EMPHASIS);
+                    }
                 } else {
-                    mMSDLPlayerWrapper.playToken(MSDLToken.TAP_HIGH_EMPHASIS);
+                    mLauncher.getAppsView().performHapticFeedback(
+                            HapticFeedbackConstants.VIRTUAL_KEY,
+                            HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
                 }
-            } else {
-                mLauncher.getAppsView().performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                        HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
             }
         }
     }

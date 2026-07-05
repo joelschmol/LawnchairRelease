@@ -29,6 +29,7 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
@@ -42,20 +43,24 @@ import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.TextView
+import androidx.compose.ui.util.lerp
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.luminance
 import androidx.core.os.UserManagerCompat
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
+import app.lawnchair.preferences2.firstCached
 import app.lawnchair.theme.color.ColorOption
 import app.lawnchair.theme.color.tokens.ColorTokens
+import com.android.launcher3.BaseActivity
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
 import com.android.launcher3.util.Themes
+import com.android.launcher3.views.ActivityContext
 import com.android.systemui.shared.system.QuickStepContract
-import com.patrykmichalik.opto.core.firstBlocking
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.Locale
@@ -145,8 +150,9 @@ fun supportsRoundedCornersOnWindows(context: Context): Boolean {
 
 fun overrideAllAppsTextColor(textView: TextView) {
     val context = textView.context
+    val luminance = getAllAppsBaseColor(context, ColorTokens.AllAppsScrimColor.resolveColor(context)).luminance
     val opacity = PreferenceManager.getInstance(context).drawerOpacity.get()
-    if (opacity <= 0.3f) {
+    if (luminance > 0.5f || opacity <= 0.3f) {
         textView.setTextColor(Themes.getAttrColor(context, R.attr.allAppsAlternateTextColor))
     }
 }
@@ -172,25 +178,28 @@ val View?.pendingIntent get() = this?.getTag(pendingIntentTagId) as? PendingInte
 
 fun getFolderPreviewAlpha(context: Context): Int {
     val prefs2 = PreferenceManager2.getInstance(context)
-    return (prefs2.folderPreviewBackgroundOpacity.firstBlocking() * 255).toInt()
+    return (prefs2.folderPreviewBackgroundOpacity.firstCached() * 255).toInt()
 }
 
 fun getFolderBackgroundAlpha(context: Context): Int {
     val prefs2 = PreferenceManager2.getInstance(context)
-    return (prefs2.folderBackgroundOpacity.firstBlocking() * 255).toInt()
+    return (prefs2.folderBackgroundOpacity.firstCached() * 255).toInt()
 }
 
-fun getAllAppsScrimColor(context: Context): Int {
-    val opacity = PreferenceManager.getInstance(context).drawerOpacity.get()
+/** Apply Lawnchair custom allapps colour to the provided colour */
+private fun getAllAppsBaseColor(context: Context, defaultColor: Int): Int {
     val prefs2 = PreferenceManager2.getInstance(context)
-    var scrimColor = ColorTokens.AllAppsScrimColor.resolveColor(context)
-    val colorOptions: ColorOption = prefs2.appDrawerBackgroundColor.firstBlocking()
+    val colorOptions: ColorOption = prefs2.appDrawerBackgroundColor.firstCached()
     val color = colorOptions.colorPreferenceEntry.lightColor.invoke(context)
-    if (color != 0) {
-        scrimColor = color
-    }
-    val alpha = (opacity * 255).roundToInt()
-    return ColorUtils.setAlphaComponent(scrimColor, alpha)
+    val baseColor = if (color != 0) color else defaultColor
+    return ColorUtils.setAlphaComponent(baseColor, 255)
+}
+
+/** Apply Lawnchair custom allapps opacity and colour to the provided colour */
+fun getAllAppsBackgroundColor(context: Context, defaultColor: Int): Int {
+    val prefs = PreferenceManager.getInstance(context)
+    val userOpacity = prefs.drawerOpacity.get()
+    return ColorUtils.setAlphaComponent(getAllAppsBaseColor(context, defaultColor), (userOpacity * 255).roundToInt())
 }
 
 fun Context.checkPackagePermission(packageName: String, permissionName: String): Boolean {
@@ -407,4 +416,35 @@ inline fun <T> listWhileNotNull(generator: () -> T?): List<T> = mutableListOf<T>
     }
 }
 
-fun String.toTitleCase(): String = splitToSequence(" ").map { replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }.joinToString(" ")
+fun String.toTitleCase(): String = splitToSequence(" ")
+    .map { word -> word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+    .joinToString(" ")
+
+/**
+ * Calculate an `inSampleSize` as a power of 2 so that a decoded bitmap stays as small as possible
+ * while both dimensions remain >= [reqWidth] / [reqHeight].
+ */
+fun calculateInSampleSize(rawWidth: Int, rawHeight: Int, reqWidth: Int, reqHeight: Int): Int {
+    var inSampleSize = 1
+    if (rawHeight > reqHeight || rawWidth > reqWidth) {
+        val halfHeight = rawHeight / 2
+        val halfWidth = rawWidth / 2
+        while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+            inSampleSize *= 2
+        }
+    }
+    return inSampleSize
+}
+
+/**
+ * Decode a bitmap from [path] downsampled to roughly [reqWidth] x [reqHeight] to avoid loading
+ * full-resolution images into small views. Returns null if the file cannot be decoded.
+ */
+fun decodeSampledBitmapFromFile(path: String, reqWidth: Int, reqHeight: Int): Bitmap? {
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeFile(path, bounds)
+    val options = BitmapFactory.Options().apply {
+        inSampleSize = calculateInSampleSize(bounds.outWidth, bounds.outHeight, reqWidth, reqHeight)
+    }
+    return BitmapFactory.decodeFile(path, options)
+}

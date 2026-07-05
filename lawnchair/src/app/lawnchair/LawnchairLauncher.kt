@@ -38,9 +38,11 @@ import app.lawnchair.data.wallpaper.service.WallpaperService
 import app.lawnchair.gestures.GestureController
 import app.lawnchair.gestures.VerticalSwipeTouchController
 import app.lawnchair.gestures.config.GestureHandlerConfig
+import app.lawnchair.gestures.ui.LawnchairShortcutActivity
 import app.lawnchair.nexuslauncher.OverlayCallbackImpl
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
+import app.lawnchair.preferences2.firstCached
 import app.lawnchair.root.RootHelperManager
 import app.lawnchair.root.RootNotAvailableException
 import app.lawnchair.theme.ThemeProvider
@@ -72,7 +74,6 @@ import com.android.launcher3.util.RunnableList
 import com.android.launcher3.util.SystemUiController.UI_STATE_BASE_WINDOW
 import com.android.launcher3.util.Themes
 import com.android.launcher3.util.TouchController
-import com.android.launcher3.util.WallpaperThemeManager
 import com.android.launcher3.views.ActivityContext
 import com.android.launcher3.views.OptionsPopupView
 import com.android.launcher3.views.OptionsPopupView.OptionItem
@@ -81,7 +82,6 @@ import com.android.launcher3.widget.RoundedCornerEnforcement
 import com.android.systemui.plugins.shared.LauncherOverlayManager
 import com.android.systemui.shared.system.QuickStepContract
 import com.kieronquinn.app.smartspacer.sdk.client.SmartspacerClient
-import com.patrykmichalik.opto.core.firstBlocking
 import com.patrykmichalik.opto.core.onEach
 import dev.kdrag0n.monet.theme.ColorScheme
 import java.util.stream.Stream
@@ -247,6 +247,18 @@ class LawnchairLauncher : QuickstepLauncher() {
         AppDatabase.INSTANCE.get(this).checkpointSync()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        if (intent != null && intent.action == LawnchairShortcutActivity.START_ACTION) {
+            val handlerString = intent.getStringExtra(LawnchairShortcutActivity.EXTRA_HANDLER)
+            val config = handlerString?.let { GestureHandlerConfig.fromString(it) }
+            if (config != null && config.isExternallyInvokable()) {
+                gestureController.handle(config)
+            }
+        }
+
+        super.onNewIntent(intent)
+    }
+
     override fun collectStateHandlers(out: MutableList<StateHandler<LauncherState>>) {
         super.collectStateHandlers(out)
         out.add(SearchBarStateHandler(this))
@@ -255,7 +267,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun getSupportedShortcuts(container: Int): Stream<SystemShortcut.Factory<*>> = Stream.concat(
         super.getSupportedShortcuts(container),
         Stream.concat(
-            Stream.of(LawnchairShortcut.UNINSTALL, LawnchairShortcut.CUSTOMIZE),
+            Stream.of(LawnchairShortcut.UNINSTALL, LawnchairShortcut.CUSTOMIZE, LawnchairShortcut.OPEN_IN_STORE),
             if (LawnchairApp.isRecentsEnabled) Stream.of(LawnchairShortcut.PAUSE_APPS) else Stream.empty(),
         ),
     )
@@ -264,7 +276,7 @@ class LawnchairLauncher : QuickstepLauncher() {
         if (themeProvider.colorScheme != colorScheme) {
             recreate()
         } else {
-            WallpaperThemeManager(this).updateTheme()
+            mWallpaperThemeManager.updateTheme()
         }
     }
 
@@ -275,12 +287,6 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun handleHomeTap() {
         gestureController.onHomePressed()
-    }
-
-    override fun registerBackDispatcher() {
-        if (LawnchairApp.isAtleastT) {
-            super.registerBackDispatcher()
-        }
     }
 
     fun bindItems(items: List<ItemInfo>, forceAnimateIcons: Boolean) {
@@ -318,7 +324,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun showDefaultOptions(x: Float, y: Float) {
-        val showWallpaperCarousel = "+carousel" in preferenceManager2.launcherPopupOrder.firstBlocking()
+        val showWallpaperCarousel = "+carousel" in preferenceManager2.launcherPopupOrder.firstCached()
 
         if (showWallpaperCarousel) {
             show<LawnchairLauncher>(
@@ -488,7 +494,7 @@ class LawnchairLauncher : QuickstepLauncher() {
      */
     private fun reloadIconsIfNeeded() {
         if (
-            preferenceManager2.alwaysReloadIcons.firstBlocking()
+            preferenceManager2.alwaysReloadIcons.firstCached()
         ) {
             LauncherAppState.getInstance(this).model.reloadIfActive()
         }

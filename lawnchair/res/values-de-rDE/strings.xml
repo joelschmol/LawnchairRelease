@@ -55,7 +55,7 @@
     <string name="changes_dialog_commit_info">von %1$s • %2$s • %3$s</string>
     <!-- Time ago strings -->
     <string name="time_just_now">gerade eben</string>
-    <string name="time_minutes_ago">%dMin.</string>
+    <string name="time_minutes_ago">%dMin</string>
     <string name="time_hours_ago">%dStd.</string>
     <string name="time_days_ago">%dT.</string>
     <string name="time_weeks_ago">%dW.</string>
@@ -116,6 +116,7 @@
     <string name="apps_in_folder_description">Ordnern zugewiesene Apps sind von der App-Liste ausgeschlossen</string>
     <string name="folders_filter_duplicates">Nur Apps, die keine Duplikate sind, zeigen</string>
     <string name="my_folder_label">Mein Ordner</string>
+    <string name="sort_active_items_action">Sort active items</string>
     <!-- A11y description -->
     <string name="accessibility_service_description">Um bestimmte Aktionen (bspw. das Mobiltelefon sperren) auszuführen, wenn eine Geste ausgeführt wird, benötigt Lawnchair Bedienungshilfen-Zugriff.\n\nLawnchair nimmt keine deiner Aktionen auf, jedoch ist die Berechtigung, dies zu tun, Teil des Bedienungshilfen-Zugriffes. Lawnchair löscht jedes Ereignis, das vom System gesendet wird.\n\nUm das Gerät zu sperren, oder die zuletzt geöffneten Apps zu öffnen, wird der performGlobalAction Bedienungshilfen-Service verwendet.</string>
     <string name="x_with_y_count">%1$s (%2$d)</string>
@@ -150,6 +151,8 @@
     <string name="gestures_description">Tippen und Wischen</string>
     <string name="quickstep_label">Letzte Apps</string>
     <string name="quickstep_description">\"Alle Apps schließen\"-Schaltfläche, Eckradius</string>
+    <string name="backup_and_restore_label">Sichern und Wiederherstellen</string>
+    <string name="backup_and_restore_description">Aktuelles Setup speichern, Backups wiederherstellen</string>
     <string name="about_label">Über</string>
     <string name="app_info_drop_target_label">App-Info</string>
     <string name="debug_restart_launcher">Lawnchair neustarten</string>
@@ -168,17 +171,15 @@
     <string name="always_reload_icons_label">Symbole immer neu laden</string>
     <string name="always_reload_icons_description">Die Verwendung zwischengespeicherter Symbole aus Symbol-Paketen vermeiden</string>
     <string name="always_reload_icons_warning">Führt zu regelmäßigem Neuladen von Icons. Nicht erforderlich, wenn das Icon-Pack nicht sehr häufig Updates erhält.</string>
-    <string name="icon_swipe_gestures">Symbol-Wischgesten</string>
-    <string name="icon_swipe_gestures_description">Führe beim nach links oder rechts Wischen Aktionen aus, statt zwischen Startbildschirmseiten zu wechseln</string>
     <string name="show_deck_layout">Deck-Layout</string>
-    <string name="show_deck_layout_description">Zeige eine Layout-Option, um die App-Übersicht auszublenden und neue Apps automatisch zum Startbildschirm hinzuzufügen</string>
+    <string name="show_deck_layout_description">Eine Layout-Option anzeigen, um die App-Übersicht auszublenden und neue Apps automatisch zum Startbildschirm hinzuzufügen</string>
     <string name="material_expressive_label">Material 3 Expressive</string>
     <string name="material_expressive_description">Material 3 Expressive-Änderungen im Arbeitsprofil aktivieren</string>
-    <string name="experimental_folder_shape_modify_label">Anpassbare Ordner-Form</string>
-    <string name="folder_shape_label">Ordner</string>
+    <string name="folder_shape_label">Ordnerform</string>
+    <string name="folder_label">Ordner</string>
     <string name="app_icon_shape_label">App</string>
-    <string name="gesturenavcontract_label">GestureNavContract-API</string>
-    <string name="gesturenavcontract_description">Rendern von Launcher-Animationen ohne Root, funktioniert nicht mit stark modifizierten AOSP-ROMs</string>
+    <string name="gesturenavcontract_label">API für GestureNavContract verwenden</string>
+    <string name="gesturenavcontract_description">Greift auf erweiterte Animationen bei der Gesten-Navigation in Android zu. Nicht alle Geräte unterstützen dies und bei der Verwendung kann es zu Animationsfehlern kommen.</string>
     <string name="gesturenavcontract_warning_incompatibility">GestureNavContract kann während der Animationen Artefakte verursachen</string>
     <string name="recents_lock_unlock">Anpinnen/Lösen</string>
     <string name="recents_lock_unlock_description">Verhindert, dass die gewählte App durch \"Alle Apps schließen\" entfernt wird</string>
@@ -207,14 +208,15 @@
     -->
     <!-- General strings -->
     <string name="icon_style_label">Symbolstil</string>
+    <string name="apply_icon_pack_title">Symbolpaket anwenden</string>
     <string name="icon_shape_label">Symbolform</string>
     <string name="icon_sizes">Symbolgröße</string>
     <string name="show_labels">Beschriftung anzeigen</string>
     <string name="label_size">Beschriftungsgröße</string>
     <string name="twoline_label">Mehrere Zeilen verwenden</string>
     <!-- Icon-related settings -->
-    <string name="transparent_background_icons_label">Transparente Design-Symbole</string>
-    <string name="transparent_background_icons_description">Transparenten Hintergrund für Symboldesigns verwenden</string>
+    <string name="transparent_background_icons_label">Transparent icon backgrounds</string>
+    <string name="transparent_background_icons_description">For themed icons and auto-adaptive icons</string>
     <string name="auto_adaptive_icons_label">Automatische adaptive Symbole</string>
     <string name="auto_adaptive_icons_description">Für alle nicht adaptiven Symbole</string>
     <string name="shadow_bg_icons_label">Schatten hinter Symbolen anzeigen</string>
@@ -251,10 +253,23 @@
     <string name="icon_shape_four_sided_cookie">Vierseitiges Cookie</string>
     <string name="icon_shape_seven_sided_cookie">Siebseitiges Cookie</string>
     <string name="icon_shape_arch">Bogen</string>
+    <!-- Additional icon shapes -->
+    <string name="icon_shape_cloudy">Wolke</string>
+    <string name="icon_shape_flower">Blume</string>
+    <string name="icon_shape_heart">Herz</string>
+    <string name="icon_shape_leaf">Blatt</string>
+    <string name="icon_shape_meow">Miau</string>
+    <string name="icon_shape_pebble">Kiesel</string>
+    <string name="icon_shape_roundedhexagon">Abgerundetes Sechseck</string>
+    <string name="icon_shape_stretched">Gedehnt</string>
+    <string name="icon_shape_vessel">Boot</string>
     <!-- Custom icon shapes -->
     <string name="custom_icon_shape">Eigene Symbolform</string>
     <string name="custom_icon_shape_create">Eigene Symbolform erstellen</string>
     <string name="custom_icon_shape_edit">Eigene Symbolform bearbeiten</string>
+    <string name="custom_folder_shape">Eigene Ordnerform</string>
+    <string name="custom_folder_shape_create">Eigene Ordnerform erstellen</string>
+    <string name="custom_folder_shape_edit">Eigene Ordnerform bearbeiten</string>
     <string name="custom_icon_shape_corner">Form der Ecken</string>
     <string name="custom_icon_shape_corner_round">Runde Ecken</string>
     <string name="custom_icon_shape_corner_squircle">Quadreis-Symbol-Ecken</string>
@@ -271,6 +286,8 @@
     <string name="themed_icon_pack">Symboldesign-Quelle</string>
     <string name="themed_icon_pack_tint">In Akzentfarbe einfärben</string>
     <string name="system_icons">System-Symbole</string>
+    <string name="force_monochrome_label">Einfarbigkeit erzwingen</string>
+    <string name="force_monochrome_description">Erfordert Neustart, nicht unterstützte Apps in Akzentfarbe einfärben</string>
     <string name="themed_icon_title">Symboldesigns</string>
     <string name="themed_icons_off_label">Aus</string>
     <string name="themed_icons_home_label">Startbildschirm</string>
@@ -363,8 +380,12 @@
     <!-- Available targets -->
     <string name="smartspace_weather">Wetter</string>
     <string name="smartspace_battery_status">Ladestand</string>
+    <string name="smartspace_torch">Flashlight status</string>
     <string name="smartspace_now_playing">Musikwiedergabe</string>
     <string name="smartspace_onboarding">Einführung</string>
+    <!-- Torch strings -->
+    <string name="torch_status_on">Flashlight on</string>
+    <string name="torch_action_off">Tap to turn off</string>
     <!-- Onboarding strings -->
     <string name="onboarding_open_settings_title">Konfiguriere deinen Lawnchair</string>
     <string name="onboarding_open_settings_subtitle">Zum Öffnen der Einstellungen lange auf den Startbildschirm drücken</string>
@@ -433,6 +454,8 @@
     <string name="backup_restore_success">Sicherung wiederhergestellt</string>
     <string name="backup_restore_error">Fehler beim Wiederherstellen der Sicherung</string>
     <string name="invalid_backup_file">Ungültige Sicherungsdatei</string>
+    <string name="create_backup_description">Einstellungen und Launcher-Layout exportieren</string>
+    <string name="restore_backup_description">Eine zuvor erstellte Sicherung importieren</string>
     <!--
 
     Gesture settings
@@ -441,6 +464,8 @@
     <string name="gesture_double_tap">Doppeltipp</string>
     <string name="gesture_swipe_up">Nach oben wischen</string>
     <string name="gesture_swipe_down">Nach unten wischen</string>
+    <string name="gesture_two_finger_swipe_down">Two-finger swipe down</string>
+    <string name="gesture_two_finger_swipe_up">Two-finger swipe up</string>
     <string name="gesture_home_tap">Home-Schaltfläche</string>
     <string name="gesture_back_tap">Zurück-Taste</string>
     <string name="gesture_swipe_left">Nach links wischen</string>
@@ -467,6 +492,11 @@
     <string name="recents_screen_a11y_hint">den Anwendungsverlauf öffnen</string>
     <string name="generic_a11y_hint">Um %1$s, aktiviere die Bedienungshilfe für Lawnchair. Tippe auf \"Einstellungen öffnen\", wähle \"Lawnchair\" aus und aktiviere \"Lawnchair verwenden\".</string>
     <string name="generic_a11y_disclaimer">Lawnchair verwendet die \"performGlobalAction\"-Bedienungshilfe, um diese Aktion auszuführen. Dies ist eine sensible Berechtigung, die die Überwachung anderer Apps erlaubt. Lawnchair ist jedoch nicht für diese Funktionalität konfiguriert und empfängt keine Ereignisse.</string>
+    <string name="sleep_mode_label">Ruhemodus</string>
+    <string name="sleep_mode_auto">Automatisch</string>
+    <string name="sleep_mode_root">Root</string>
+    <string name="sleep_mode_accessibility">Bedienungshilfeeinstellung</string>
+    <string name="sleep_mode_device_admin">Geräteadmin</string>
     <!--
 
     Bug reporting
@@ -506,13 +536,27 @@
     <string name="wallpaper_depth_effect_label">Hintergrundbild-Tiefeneffekt</string>
     <string name="wallpaper_depth_effect_description">Beim Wechsel der Launcher-Bereiche Bildschirmhintergrund rein- und rauszoomen</string>
     <string name="show_sys_ui_scrim">Oberer Schatten</string>
-    <string name="infinite_scrolling_label">Erste und letzte Seite verbinden</string>
+    <string name="infinite_scrolling_label">Unendliches Scrollen</string>
     <string name="infinite_scrolling_description">Von der letzten Seite zur ersten wischen</string>
     <string name="home_screen_grid">Startbildschirm-Raster</string>
     <string name="home_screen_lock">Startbildschirm sperren</string>
     <string name="home_screen_unlock">Startbildschirm entsperren</string>
     <string name="home_screen_locked">Startbildschirm ist gesperrt</string>
     <string name="home_screen_lock_description">Verhindert Änderungen am Startbildschirm-Layout</string>
+    <string name="horizontal_padding_label">Horizontaler Abstand</string>
+    <string name="vertical_padding_label">Vertical padding</string>
+    <string name="top_padding_label">Top padding</string>
+    <string name="widget_padding_label">Widget padding</string>
+    <string name="set_default_home_page">Als Standard-Startseite festlegen</string>
+    <string name="default_home_page_set">Standard-Startseite aktualisiert</string>
+    <string name="move_page_left">Seite nach links verschieben</string>
+    <string name="move_page_right">Seite nach rechts verschieben</string>
+    <string name="page_order_updated">Seitenanordnung aktualisiert</string>
+    <string name="edit_mode_page_strip_default">Standard</string>
+    <string name="edit_mode_page_strip_page">Seite %1$d</string>
+    <string name="edit_mode_page_strip_set_home">Als Startseite festlegen</string>
+    <string name="edit_mode_page_strip_home_selected">Standard-Startseite</string>
+    <string name="edit_mode_page_strip_tip">Seiten zur Neuanordnung ziehen. Tippe auf das Haus-Symbol um Deine Standard-Startseite festzulegen.</string>
     <string name="popup_menu">Pop-up-Menü</string>
     <string name="popup_menu_items">Pop-up-Menü-Einträge</string>
     <string name="edit_menu_items">Pop-up-Menü-Einträge bearbeiten</string>
@@ -559,6 +603,7 @@
     <string name="paused_apps_dialog_title">App angehalten</string>
     <string name="paused_apps_dialog_message">%1$s wurde direkt vom Launcher angehalten</string>
     <string name="paused_apps_drop_target_label">App anhalten</string>
+    <string name="open_in_store_drop_target_label">Im Store öffnen</string>
     <string name="dock_icons">Dock-Symbole</string>
     <string name="hotseat_bottom_space_label">Unterer Abstand</string>
     <string name="page_indicator_height">Seitenindikator-Höhe</string>
@@ -578,14 +623,15 @@
     <string name="pref_all_apps_bulk_icon_loading_title">Anwendungen auf einmal laden</string>
     <string name="pref_all_apps_bulk_icon_loading_description">Lade und zeige Symbole auf einmal statt einzeln</string>
     <string name="pref_all_apps_remember_position_title">Position merken</string>
-    <string name="pref_all_apps_remember_position_description">App-Drawer-Position nach Verlassen der Übersicht merken</string>
+    <string name="pref_all_apps_remember_position_description">App-Übersicht-Position nach Verlassen der Übersicht merken</string>
     <string name="pref_all_apps_show_scrollbar_title">Scroll-Leiste anzeigen</string>
     <string name="app_drawer_columns">Spalten der App-Übersicht</string>
     <string name="row_height_label">Zeilenhöhe</string>
+    <string name="app_drawer_haptic_feedback_label">Haptisches Feedback</string>
     <string name="app_drawer_indent_label">Horizontaler Abstand</string>
     <string name="app_drawer_bg_color_label">Hintergrundfarbe</string>
-    <string name="work_profile_tab_background_label">Tabs background color</string>
-    <string name="work_profile_tab_container_background_label">Separated Tab container background</string>
+    <string name="work_profile_tab_background_label">Tab-Hintergrundfarbe</string>
+    <string name="work_profile_tab_container_background_label">Separater Hintergrund für Tab-Container</string>
     <!-- HiddenAppsPreferences -->
     <string name="hide_from_drawer">Aus der App-Übersicht ausblenden</string>
     <string name="hidden_apps_label_with_count">Versteckte Apps (%1$d)</string>
@@ -723,4 +769,7 @@
     <string name="grant_requested_permissions_tap">Tippen um Berechtigungen zu erteilen</string>
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Startbildschirm geleert</string>
+    <string name="lawnchair_actions">Aktionen</string>
+    <string name="lawnchair_action_failed">Aktion fehlgeschlagen</string>
+    <string name="please_wait">Bitte warten…</string>
 </resources>

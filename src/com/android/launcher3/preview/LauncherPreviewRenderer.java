@@ -79,7 +79,7 @@ import com.android.launcher3.util.window.WindowManagerProxy;
 import com.android.launcher3.views.BaseDragLayer;
 import com.android.launcher3.widget.LauncherWidgetHolder;
 
-import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
+import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,12 +119,21 @@ public class LauncherPreviewRenderer extends BaseContext
             @Nullable SparseIntArray wallpaperColorResources,
             LauncherModel model,
             int themeRes) {
+        this(context, workspaceScreenId, wallpaperColorResources, model, themeRes, null);
+    }
+
+    public LauncherPreviewRenderer(Context context,
+            int workspaceScreenId,
+            @Nullable SparseIntArray wallpaperColorResources,
+            LauncherModel model,
+            int themeRes,
+            @Nullable InvariantDeviceProfile previewIdp) {
 
         super(context, themeRes);
         mPreferenceManager2 = PreferenceManager2.getInstance(context);
         
         mUiHandler = new Handler(Looper.getMainLooper());
-        mIdp = InvariantDeviceProfile.INSTANCE.get(context);
+        mIdp = previewIdp != null ? previewIdp : InvariantDeviceProfile.INSTANCE.get(context);
         mDp = getDeviceProfileForPreview(context).toBuilder(context)
                 .setViewScaleProvider(new PreviewScaleProvider(this)).build();
         Rect insets = getInsets(context);
@@ -336,7 +345,7 @@ public class LauncherPreviewRenderer extends BaseContext
         populateHotseatPredictions(itemIdMap);
 
         // Add first page QSB
-        if (PreferenceExtensionsKt.firstBlocking(mPreferenceManager2.getEnableSmartspace())) {
+        if (PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getEnableSmartspace())) {
             CellLayout firstScreen = mWorkspaceScreens.get(FIRST_SCREEN_ID);
             if (firstScreen != null) {
                 View qsb = mHomeElementInflater.inflate(mWorkspaceSearchContainer, firstScreen, false);
